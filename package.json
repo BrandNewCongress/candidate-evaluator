@@ -1,0 +1,40 @@
+{
+  "name": "candidate-evaluator",
+  "version": "1.0.0",
+  "description": "A simple tool to evaluate Brand New Congress candidates",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrandNewCongress/candidate-evaluator.git"
+  },
+  "keywords": [
+    "BrandNewCongress",
+    "BNC",
+    "candidates"
+  ],
+  "author": "Saikat Chakrabarti",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/BrandNewCongress/candidate-evaluator/issues"
+  },
+  "homepage": "https://github.com/BrandNewCongress/candidate-evaluator#readme",
+  "dependencies": {
+    "aphrodite": "^1.1.0",
+    "axios": "^0.15.3",
+    "belle": "^3.0.1",
+    "express": "^4.14.1",
+    "next": "^2.0.0-beta.24",
+    "react": "^15.4.2",
+    "react-formal": "^0.24.3",
+    "yup": "^0.21.3"
+  },
+  "devDependencies": {
+    "json-loader": "^0.5.4"
+  }
+}
