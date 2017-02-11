@@ -1,19 +1,22 @@
-import Form from '../components/forms/Form'
 import yup from 'yup'
 import Router from 'next/router'
 import axios from 'axios'
 import { StyleSheet, css } from 'aphrodite'
 import {Button, Card} from 'belle'
 import bootstrapify from '../lib/bootstrapify'
+import Multi from '../components/Multi'
+import TextField from '../components/TextField'
+import transform from '../lib/transform'
 
 bootstrapify()
 
-const baseUrl = 'http://localhost:8080/people/'
+const baseUrl = 'http://localhost:8080/person/'
 
 const styles = StyleSheet.create({
   column: {
     display: 'inline-block',
-    padding: '10px'
+    padding: '10px',
+    verticalAlign: 'top'
   },
   left: {
     width: '55%'
@@ -27,93 +30,147 @@ const styles = StyleSheet.create({
   }
 })
 
-class EvaluationForm extends React.Component {
+export default class EvaluationForm extends React.Component {
   state = {
-    person: null,
+    person: {
+      name: 'Loading...',
+      emailAddresses: ['Loading...'],
+      phoneNumbers: ['Loading...'],
+    },
     error: null,
     loading: null
   }
 
-  async componentDidMount(props) {
-    console.log('router', Router.router.query.id)
-    const person = await axios.get(baseUrl + Router.router.query.id)
-    if (person.data) {
-      this.setState({ person: person.data.fields })
-    } else {
-      this.setState({ error: 'There was an error loading that person' })
-    }
+  componentDidMount(props) {
+    axios.get(baseUrl + Router.router.query.id)
+    .then(person => {
+      if (person.data) {
+        const t = transform.in(person.data.fields)
+        this.setState({
+          person: t
+        })
+      } else {
+        this.setState({ error: 'There was an error loading that person' })
+      }
+    })
   }
 
   fields = [
     {
-      name: 'email',
-      type: 'string',
-      label: 'Email',
-      schema: yup.string().transform((value) => value.replace(/\s/g, ''))
-        .required()
-        .email()
+      name: 'emailAddresses',
+      multi: true,
+      label: 'Email Addresses',
+      schema: yup.array().of(yup.string().transform((value) => value.replace(/\s/g, ''))
+        .email())
     },
     {
-      name: 'phone',
-      type: 'tel',
-      label: 'Phone',
-      schema: yup.string()
+      name: 'phoneNumbers',
+      label: 'Phone Numbers',
+      multi: true,
+      schema: yup.array().of(yup.string())
     },
     {
       name: 'facebook',
-      type: 'string',
       label: 'Facebook',
-      schema: yup.string()
+      schema: yup.string().url()
     },
     {
       name: 'linkedin',
-      type: 'string',
       label: 'LinkedIn',
-      schema: yup.string()
+      schema: yup.string().url()
     },
     {
       name: 'profile',
-      type: 'string',
       label: 'Profile',
+      allowNewLine: true,
       schema: yup.string()
     },
     {
+      name: 'otherLinks',
+      label: 'Other Links',
+      multi: true,
+      schema: yup.array().of(yup.string().url())
+    },
+    {
+      name: 'addresses',
+      label: 'Addresses',
+      multi: true,
+      schema: yup.array().of(yup.string())
+    },
+    {
       name: 'gender',
-      type: 'string',
       label: 'Gender',
       schema: yup.string()
     },
     {
       name: 'race',
-      type: 'string',
       label: 'Race',
       schema: yup.string()
     },
     {
       name: 'politicalParty',
-      type: 'string',
       label: 'Political Party',
       schema: yup.string()
+    },
+    {
+      name: 'religion',
+      label: 'Religion',
+      schema: yup.string()
+    },
+    {
+      name: 'nominations',
+      label: 'Nominations',
+      schema: yup.array().of(yup.string())
+    },
+    {
+      name: 'occupations',
+      label: 'Occupations',
+      schema: yup.string()
+    },
+    {
+      name: 'potentialVolunteer',
+      label: 'Potential Volunteer',
+      schema: yup.boolean()
+    },
+    {
+      name: 'evaluations',
+      label: 'Evaluations',
+      multi: true,
+      schema: yup.array().of(yup.string())
     }
   ]
 
-  formSchema = yup.object(this.fields.reduce((acc, field) =>
-    Object.assign({[field.name]: field.schema}, acc)
-  , {}))
+  submit = data => {
+    const fields = []
+    const datas = []
+    const validations = []
 
-  onSubmit = data => axios.put(baseUrl + Router.router.query.id, data)
+    for (let r in this.refs) {
+      const [fieldName, data, validationPromise] = this.refs[r].report()
+      fields.push(fieldName)
+      datas.push(data)
+      validations.push(validationPromise)
+    }
+
+    Promise.all(validations)
+    .then(valids => {
+      if (valids.every(v => v)) {
+        const update = datas.reduce((acc, data, idx) =>
+          Object.assign({[fields[idx]]: data.value || data.values}, acc)
+        , {})
+
+        axios.put(baseUrl + Router.router.query.id, update)
+        .then(ok => this.setState({saved: true}))
+        .catch(err => this.setState({error: err}))
+      }
+    })
+    .catch(err => {
+      this.setState({error: err})
+    })
+  }
 
   render() {
-    let { person, error, loading } = this.state
-
-    // TODO remove dummy data
-    if (!person) {
-      person = {
-        name: 'Saikat Chakrabarti',
-        district: 'NY-10',
-        status: 'Round 1 - To Be Evaluated'
-      }
-    }
+    const { person, error, loading } = this.state
 
     if (loading) {
       return (
@@ -128,16 +185,14 @@ class EvaluationForm extends React.Component {
             <div>
               {`${person.name} - ${person.district}`}
               <br/>
-              {`Status: ${person.status}`}
+              {`Status: ${person.nominationStatus}`}
             </div>
-            <Button primary >
+            <Button primary onClick={this.submit}>
               Submit Evaluation
             </Button>
           </Card>
 
-          <Form
-            schema={this.formSchema}
-          >
+          <div className={css(styles.form)}>
             <div className={css(styles.column, styles.left)}>
               {this.fields.slice(0, 5).map(this.renderField)}
             </div>
@@ -146,17 +201,17 @@ class EvaluationForm extends React.Component {
               {this.fields.slice(5).map(this.renderField)}
             </div>
 
-          </Form>
+          </div>
         </div>
       )
     }
   }
 
-  renderField (config) {
-    return (
-      <Form.Field {...config} />
-    )
-  }
+  renderField = (config) => config.multi
+    ? ( <Multi {...config}
+        values={this.state.person[config.name]}
+        ref={config.name} /> )
+    : ( <TextField {...config}
+        value={this.state.person[config.name]}
+        ref={config.name} /> )
 }
-
-export default EvaluationForm

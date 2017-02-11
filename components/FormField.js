@@ -5,20 +5,17 @@ const styles = StyleSheet.create({
   labelStyle: {
     paddingBottom: 5,
     fontWeight: 500,
-    fontSize: 16
+    fontSize: 16,
+    fontFamily: 'system-ui'
   }
 })
 
 export default class FormField extends React.Component {
-  shouldComponentUpdate(nextProps, nextState) {
-    return !(this.props.value === nextProps.value && this.props.errorText === nextProps.errorText)
-  }
-
   fixedLabel() {
-    if (this.props.fixedLabel) {
+    if (this.props.label) {
       return (
         <div className={css(styles.labelStyle)}>
-          {this.props.fixedLabel}
+          {this.props.label}
         </div>
       )
     }
