@@ -1,16 +1,21 @@
 import FormField from './FormField'
 import { Card, TextInput } from 'belle'
 
+const fromProps = values => values && values.length > 0
+  ? values
+  : ['']
+
 export default class Multi extends FormField {
   state = {}
 
   componentWillMount() {
     this.state.name = this.props.name
-    this.state.values = this.props.values || ['']
+    this.state.values = fromProps(this.props.values)
+    console.log(this.state)
   }
 
   componentWillReceiveProps(nextProps) {
-    this.state.values = this.props.values || ['']
+    this.state.values = fromProps(this.props.values)
     this.forceUpdate()
   }
 
@@ -41,7 +46,7 @@ export default class Multi extends FormField {
 
   report = () => [
     this.state.name,
-    Object.assign({}, this.state),
+    Object.assign({}, {values: this.state.values.filter(v => v != '')}),
     this.props.schema.isValid(this.state.values)
   ]
 

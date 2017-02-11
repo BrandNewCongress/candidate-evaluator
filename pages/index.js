@@ -31,30 +31,6 @@ const styles = StyleSheet.create({
 })
 
 export default class EvaluationForm extends React.Component {
-  state = {
-    person: {
-      name: 'Loading...',
-      emailAddresses: ['Loading...'],
-      phoneNumbers: ['Loading...'],
-    },
-    error: null,
-    loading: null
-  }
-
-  componentDidMount(props) {
-    axios.get(baseUrl + Router.router.query.id)
-    .then(person => {
-      if (person.data) {
-        const t = transform.in(person.data.fields)
-        this.setState({
-          person: t
-        })
-      } else {
-        this.setState({ error: 'There was an error loading that person' })
-      }
-    })
-  }
-
   fields = [
     {
       name: 'emailAddresses',
@@ -140,6 +116,27 @@ export default class EvaluationForm extends React.Component {
     }
   ]
 
+  state = {
+    person: {},
+    error: null,
+    loading: true
+  }
+
+  componentDidMount(props) {
+    axios.get(baseUrl + Router.router.query.id)
+    .then(person => {
+      if (person.data) {
+        const t = transform.in(person.data.fields)
+        this.setState({
+          person: t,
+          loading: false
+        })
+      } else {
+        this.setState({ error: 'There was an error loading that person' })
+      }
+    })
+  }
+
   submit = data => {
     const fields = []
     const datas = []
@@ -155,9 +152,9 @@ export default class EvaluationForm extends React.Component {
     Promise.all(validations)
     .then(valids => {
       if (valids.every(v => v)) {
-        const update = datas.reduce((acc, data, idx) =>
+        const update = transform.out(datas.reduce((acc, data, idx) =>
           Object.assign({[fields[idx]]: data.value || data.values}, acc)
-        , {})
+        , {}))
 
         axios.put(baseUrl + Router.router.query.id, update)
         .then(ok => this.setState({saved: true}))
@@ -209,9 +206,11 @@ export default class EvaluationForm extends React.Component {
 
   renderField = (config) => config.multi
     ? ( <Multi {...config}
+        key={config.name}
         values={this.state.person[config.name]}
         ref={config.name} /> )
     : ( <TextField {...config}
+        key={config.name}
         value={this.state.person[config.name]}
         ref={config.name} /> )
 }
