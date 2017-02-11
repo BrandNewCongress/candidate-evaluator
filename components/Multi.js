@@ -11,7 +11,6 @@ export default class Multi extends FormField {
   componentWillMount() {
     this.state.name = this.props.name
     this.state.values = fromProps(this.props.values)
-    console.log(this.state)
   }
 
   componentWillReceiveProps(nextProps) {
