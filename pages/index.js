@@ -144,9 +144,11 @@ export default class EvaluationForm extends React.Component {
 
     for (let r in this.refs) {
       const [fieldName, data, validationPromise] = this.refs[r].report()
-      fields.push(fieldName)
-      datas.push(data)
-      validations.push(validationPromise)
+      if (data && (data.value || data.values)) {
+        fields.push(fieldName)
+        datas.push(data)
+        validations.push(validationPromise)
+      }
     }
 
     Promise.all(validations)

@@ -3,19 +3,27 @@ import { TextInput } from 'belle'
 import FormField from './FormField'
 
 export default class TextField extends FormField {
+  changed = false
   state = {}
 
   componentWillMount () {
     Object.assign(this.state, this.props)
   }
 
+  valIfChanged = () => this.changed
+    ? Object.assign({}, this.state)
+    : undefined
+
   report = () => [
     this.state.name,
-    Object.assign({}, this.state),
+    this.valIfChanged(),
     this.props.schema.isValid(this.state.value)
   ]
 
-  onUpdate = change => this.setState(change)
+  onUpdate = change => {
+    this.setState(change)
+    this.changed = true
+  }
 
   render() {
     const style = {marginBottom: '5px'}

@@ -6,6 +6,7 @@ const fromProps = values => values && values.length > 0
   : ['']
 
 export default class Multi extends FormField {
+  changed = false
   state = {}
 
   componentWillMount() {
@@ -39,13 +40,18 @@ export default class Multi extends FormField {
   }
 
   generateSetter = idx => ({value}) => {
+    this.changed = true
     this.state.values[idx] = value
     this.forceUpdate()
   }
 
+  valIfChanged = () => this.changed
+    ? Object.assign({}, {values: this.state.values.filter(v => v != '')})
+    : undefined
+
   report = () => [
     this.state.name,
-    Object.assign({}, {values: this.state.values.filter(v => v != '')}),
+    this.valIfChanged(),
     this.props.schema.isValid(this.state.values)
   ]
 
