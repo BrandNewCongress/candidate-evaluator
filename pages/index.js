@@ -4,9 +4,10 @@ import axios from 'axios'
 import { StyleSheet, css } from 'aphrodite'
 import {Button, Card} from 'belle'
 import bootstrapify from '../lib/bootstrapify'
-import Multi from '../components/Multi'
-import TextField from '../components/TextField'
 import transform from '../lib/transform'
+import Multi from '../components/Multi'
+import Evaluations from '../components/Evaluations'
+import TextField from '../components/TextField'
 
 bootstrapify()
 
@@ -112,7 +113,7 @@ export default class EvaluationForm extends React.Component {
       name: 'evaluations',
       label: 'Evaluations',
       multi: true,
-      schema: yup.array().of(yup.string())
+      schema: yup.array().of(yup.string()) // TODO
     }
   ]
 
@@ -158,6 +159,7 @@ export default class EvaluationForm extends React.Component {
           Object.assign({[fields[idx]]: data.value || data.values}, acc)
         , {}))
 
+        console.log(update)
         axios.put(baseUrl + Router.router.query.id, update)
         .then(ok => this.setState({saved: true}))
         .catch(err => this.setState({error: err}))
@@ -186,9 +188,14 @@ export default class EvaluationForm extends React.Component {
               <br/>
               {`Status: ${person.nominationStatus}`}
             </div>
-            <Button primary onClick={this.submit}>
-              Submit Evaluation
-            </Button>
+            <div>
+              <Button style={{marginRight: 10}} primary onClick={this.submit}>
+                Submit Evaluation
+              </Button>
+              <Button onClick={() => window.location.reload()}>
+                Reset All
+              </Button>
+            </div>
           </Card>
 
           <div className={css(styles.form)}>
@@ -206,13 +213,28 @@ export default class EvaluationForm extends React.Component {
     }
   }
 
-  renderField = (config) => config.multi
-    ? ( <Multi {...config}
-        key={config.name}
+  renderField = (config) => ['evaluations'].includes(config.name)
+    ? this.renderSpecial(config)
+    : config.multi
+      ? ( <Multi {...config}
+          key={config.name}
+          values={this.state.person[config.name]}
+          ref={config.name} /> )
+      : ( <TextField {...config}
+          key={config.name}
+          value={this.state.person[config.name]}
+          ref={config.name} /> )
+
+  renderSpecial = (config) => {
+    const Field = {
+      evaluations: Evaluations
+    }[config.name]
+
+    return (
+      <Field {...config} key={config.name}
         values={this.state.person[config.name]}
-        ref={config.name} /> )
-    : ( <TextField {...config}
-        key={config.name}
-        value={this.state.person[config.name]}
-        ref={config.name} /> )
+        ref={config.name}
+       />
+    )
+  }
 }

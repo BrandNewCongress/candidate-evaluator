@@ -3,8 +3,10 @@ import { TextInput } from 'belle'
 import FormField from './FormField'
 
 export default class PhoneField extends FormField {
+  format = number => `(${this.props.value.substring(0, 3)}) ${this.props.value.substring(3, 6)}-${this.props.value.substring(6, 10)}`
+
   render() {
-    let formattedPhone = this.props.value && this.props.value.length === 10 ? `(${this.props.value.substring(0, 3)}) ${this.props.value.substring(3, 6)}-${this.props.value.substring(6, 10)}` : this.props.value
+    let formattedPhone = this.props.value ? this.format(this.props.value) : this.props.value
 
     return (
       <div>
@@ -17,7 +19,7 @@ export default class PhoneField extends FormField {
             let val = event.value.replace(/\D/g, '')
             if (val.length > 10)
               val = val.substring(0, 10)
-            this.props.onChange(val)
+            this.props.onChange(this.format(val))
           }}
         />
       </div>
