@@ -127,7 +127,8 @@ export default class EvaluationForm extends React.Component {
     axios.get(baseUrl + Router.router.query.id)
     .then(person => {
       if (person.data) {
-        const t = transform.in(person.data.fields)
+        const t = transform.in(person.data)
+        console.log(t)
         this.setState({
           person: t,
           loading: false

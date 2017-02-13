@@ -14,13 +14,33 @@ export default class Evaluation extends React.Component {
     editing: null
   }
 
-  componentWillMount () {
-    Object.assign(this.state, this.props)
+  statify = props => {
+    const copy = Object.assign({}, props)
+
+    for (let key in props.value) {
+      const newKey = {
+        'Move To Next Round': 'moveOn',
+        Round: 'round',
+        'District Score': 'districtScore',
+        Score: 'score'
+      }[key]
+
+      if (newKey)
+        this.state.value[newKey] = props.value[key]
+    }
+
+    delete copy.value
+    Object.assign(this.state, copy)
   }
+
+  componentWillMount () {
+    this.statify(this.props)
+  }
+
 
   componentWillReceiveProps (nextProps) {
     this.state.editing = false
-    Object.assign(this.state, nextProps)
+    this.statify(nextProps)
   }
 
   getVal = () => Object.assign({}, this.state.value)
