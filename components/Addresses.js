@@ -1,12 +1,13 @@
-import FormField from './FormField'
+import React from 'react'
 import { Button, Card, TextInput } from 'belle'
-import Evaluation from './Evaluation'
+import Address from './Address'
+import FormField from './FormField'
 
 const fromProps = values => values && values.length > 0
   ? values
   : []
 
-export default class Evaluations extends FormField {
+export default class Addresses extends FormField {
   state = {}
 
   componentWillMount() {
@@ -47,7 +48,6 @@ export default class Evaluations extends FormField {
 
   render() {
     const {name, values} = this.state
-
     return (
       <Card id={name}>
         <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: 5}}>
@@ -55,7 +55,7 @@ export default class Evaluations extends FormField {
           <Button onClick={this.addOne}> + </Button>
         </div>
         {values.map((v, idx) => (
-          <Evaluation
+          <Address
             idx={idx}
             delete={this.delete}
             ref={idx.toString()}

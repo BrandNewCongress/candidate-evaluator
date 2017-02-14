@@ -1,17 +1,14 @@
 import React from 'react'
 import Portal from 'react-portal'
 import { TextInput, Card, Button } from 'belle'
+import states from '../lib/states'
 
-export default class Evaluation extends React.Component {
+export default class Address extends React.Component {
   state = {
     value: {
-      evaluator: null,
-      round: null,
-      score: null,
-      districtScore: null,
-      moveOn: null
-    },
-    editing: null
+      city: 'Hanover',
+      state: 'NH'
+    }
   }
 
   statify = props => {
@@ -19,10 +16,8 @@ export default class Evaluation extends React.Component {
 
     for (let key in props.value) {
       const newKey = {
-        'Move To Next Round': 'moveOn',
-        Round: 'round',
-        'District Score': 'districtScore',
-        Score: 'score'
+        City: 'city',
+        State: 'state'
       }[key]
 
       if (newKey)
@@ -36,7 +31,6 @@ export default class Evaluation extends React.Component {
   componentWillMount () {
     this.statify(this.props)
   }
-
 
   componentWillReceiveProps (nextProps) {
     this.state.editing = false
@@ -63,17 +57,17 @@ export default class Evaluation extends React.Component {
     return this.state.editing ? this.renderEditing(this.state.value) : this.renderPreview(this.state.value)
   }
 
-  renderPreview = ({evaluator, round, score, districtScore, moveOn}) => (
+  renderPreview = ({state, city}) => (
     <Card onClick={() => this.setState({editing: true})}>
-      {!round && !evaluator && !score
+      {!state && !city
         ? 'Click to edit!'
-        : `by ${evaluator} in ${round}: ${score}`
+        : `${city}, ${state}`
       }
     </Card>
   )
 
-  renderEditing = ({evaluator, round, score, districtScore, moveOn}) => (
-    <div id='evaluation-modal' style={{
+  renderEditing = ({state, city}) => (
+      <div id='evaluation-modal' style={{
         position: 'fixed',
         left: '50%',
         top: '50%',
@@ -91,53 +85,13 @@ export default class Evaluation extends React.Component {
         padding: '10px'
       }}
     >
-      <TextInput value={evaluator} placeholder='Evaluator' onUpdate={this.genOnUpdate('evaluator')} />
+      <TextInput value={city} placeholder='City/Town' onUpdate={this.genOnUpdate('city')} />
 
-      {this.renderLabel('Round')}
-      <select style={{width: '90%'}} value={round} onChange={this.selectChange('round')}>
+      {this.renderLabel('State')}
+      <select style={{width: '90%'}} value={state} onChange={this.selectChange('state')}>
         <option disabled selected value />
-        {this.optify('R1')}
-        {this.optify('R2')}
-        {this.optify('R3')}
-        {this.optify('R4')}
-        {this.optify('R5')}
-        {this.optify('R6')}
+        {states.map(this.optify)}
       </select>
-
-      {this.renderLabel('Score')}
-      <select style={{width: '90%'}} value={score} onChange={this.selectChange('score')}>
-        <option disabled selected value />
-        {this.optify('1')}
-        {this.optify('2')}
-        {this.optify('3')}
-        {this.optify('4')}
-        {this.optify('5')}
-        {this.optify('6')}
-        {this.optify('7')}
-        {this.optify('8')}
-        {this.optify('9')}
-      </select>
-
-      {this.renderLabel('District Score')}
-      <select style={{width: '90%'}} value={districtScore} onChange={this.selectChange('districtScore')}>
-        <option disabled selected value />
-        {this.optify('1')}
-        {this.optify('2')}
-        {this.optify('3')}
-        {this.optify('4')}
-        {this.optify('no')}
-      </select>
-
-      {this.renderLabel('Move On To Next Round')}
-      <select style={{width: '90%'}} value={moveOn} onChange={this.selectChange('moveOn')}>
-        <option disabled selected value />
-        {this.optify('Yes')}
-        {this.optify('No')}
-        {this.optify('Hold')}
-        {this.optify('Reevaluate')}
-        {this.optify('ni')}
-      </select>
-
       <div>
         <Button style={{width: '100px', marginTop: 20, display: 'inline-block'}} primary
           onClick={_ => this.setState({editing: false})}>

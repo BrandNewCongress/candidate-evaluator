@@ -1,4 +1,3 @@
-import yup from 'yup'
 import Router from 'next/router'
 import axios from 'axios'
 import { StyleSheet, css } from 'aphrodite'
@@ -7,6 +6,8 @@ import bootstrapify from '../lib/bootstrapify'
 import transform from '../lib/transform'
 import Multi from '../components/Multi'
 import Evaluations from '../components/Evaluations'
+import Addresses from '../components/Addresses'
+import fields from '../config'
 import TextField from '../components/TextField'
 
 bootstrapify()
@@ -32,91 +33,6 @@ const styles = StyleSheet.create({
 })
 
 export default class EvaluationForm extends React.Component {
-  fields = [
-    {
-      name: 'emailAddresses',
-      multi: true,
-      label: 'Email Addresses',
-      schema: yup.array().of(yup.string().transform((value) => value.replace(/\s/g, ''))
-        .email())
-    },
-    {
-      name: 'phoneNumbers',
-      label: 'Phone Numbers',
-      multi: true,
-      schema: yup.array().of(yup.string())
-    },
-    {
-      name: 'facebook',
-      label: 'Facebook',
-      schema: yup.string().url()
-    },
-    {
-      name: 'linkedin',
-      label: 'LinkedIn',
-      schema: yup.string().url()
-    },
-    {
-      name: 'profile',
-      label: 'Profile',
-      allowNewLine: true,
-      schema: yup.string()
-    },
-    {
-      name: 'otherLinks',
-      label: 'Other Links',
-      multi: true,
-      schema: yup.array().of(yup.string().url())
-    },
-    {
-      name: 'addresses',
-      label: 'Addresses',
-      multi: true,
-      schema: yup.array().of(yup.string())
-    },
-    {
-      name: 'gender',
-      label: 'Gender',
-      schema: yup.string()
-    },
-    {
-      name: 'race',
-      label: 'Race',
-      schema: yup.string()
-    },
-    {
-      name: 'politicalParty',
-      label: 'Political Party',
-      schema: yup.string()
-    },
-    {
-      name: 'religion',
-      label: 'Religion',
-      schema: yup.string()
-    },
-    {
-      name: 'nominations',
-      label: 'Nominations',
-      schema: yup.array().of(yup.string())
-    },
-    {
-      name: 'occupations',
-      label: 'Occupations',
-      schema: yup.string()
-    },
-    {
-      name: 'potentialVolunteer',
-      label: 'Potential Volunteer',
-      schema: yup.boolean()
-    },
-    {
-      name: 'evaluations',
-      label: 'Evaluations',
-      multi: true,
-      schema: yup.array().of(yup.string()) // TODO
-    }
-  ]
-
   state = {
     person: {},
     error: null,
@@ -128,7 +44,6 @@ export default class EvaluationForm extends React.Component {
     .then(person => {
       if (person.data) {
         const t = transform.in(person.data)
-        console.log(t)
         this.setState({
           person: t,
           loading: false
@@ -201,11 +116,11 @@ export default class EvaluationForm extends React.Component {
 
           <div className={css(styles.form)}>
             <div className={css(styles.column, styles.left)}>
-              {this.fields.slice(0, 5).map(this.renderField)}
+              {fields.slice(0, 5).map(this.renderField)}
             </div>
 
             <div className={css(styles.column, styles.right)}>
-              {this.fields.slice(5).map(this.renderField)}
+              {fields.slice(5).map(this.renderField)}
             </div>
 
           </div>
@@ -214,7 +129,7 @@ export default class EvaluationForm extends React.Component {
     }
   }
 
-  renderField = (config) => ['evaluations'].includes(config.name)
+  renderField = (config) => ['evaluations', 'addresses'].includes(config.name)
     ? this.renderSpecial(config)
     : config.multi
       ? ( <Multi {...config}
@@ -228,7 +143,8 @@ export default class EvaluationForm extends React.Component {
 
   renderSpecial = (config) => {
     const Field = {
-      evaluations: Evaluations
+      evaluations: Evaluations,
+      addresses: Addresses
     }[config.name]
 
     return (
