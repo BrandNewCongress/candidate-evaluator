@@ -25,16 +25,13 @@
   },
   "homepage": "https://github.com/BrandNewCongress/candidate-evaluator#readme",
   "dependencies": {
-    "aphrodite": "^1.1.0",
     "axios": "^0.15.3",
-    "belle": "^3.0.1",
     "express": "^4.14.1",
+    "material-ui": "^0.17.0",
     "next": "^2.0.0-beta.24",
     "react": "^15.4.2",
-    "react-formal": "^0.24.3",
-    "react-portal": "^3.0.0",
-    "to-camel-case": "^1.0.0",
-    "yup": "^0.21.3"
+    "react-tap-event-plugin": "^2.0.1",
+    "to-camel-case": "^1.0.0"
   },
   "devDependencies": {
     "json-loader": "^0.5.4"

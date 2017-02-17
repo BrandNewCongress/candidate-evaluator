@@ -1,166 +1,86 @@
 import React from 'react'
-import Portal from 'react-portal'
-import { TextInput, Card, Button } from 'belle'
+import toSpaceCase from 'to-space-case'
 
-export default class Evaluation extends React.Component {
-  state = {
-    value: {
-      evaluator: null,
-      round: null,
-      score: null,
-      districtScore: null,
-      moveOn: null
-    },
-    editing: null
-  }
+import Dialog from 'material-ui/Dialog'
+import MenuItem from 'material-ui/MenuItem'
+import RaisedButton from 'material-ui/RaisedButton'
+import SelectField from 'material-ui/SelectField'
 
-  statify = props => {
-    const copy = Object.assign({}, props)
-
-    for (let key in props.value) {
-      const newKey = {
-        'Move To Next Round': 'moveOn',
-        Round: 'round',
-        'District Score': 'districtScore',
-        Score: 'score'
-      }[key]
-
-      if (newKey)
-        this.state.value[newKey] = props.value[key]
-    }
-
-    delete copy.value
-    Object.assign(this.state, copy)
-  }
-
+export default class extends React.Component {
   componentWillMount () {
-    this.statify(this.props)
+    this.initialState = this.props
   }
 
-
-  componentWillReceiveProps (nextProps) {
-    this.state.editing = false
-    this.statify(nextProps)
+  onChange = name => (ev, idx, value) => {
+    this.props.mutateMe({[name]: value || ev.target.value})
   }
 
-  getVal = () => Object.assign({}, this.state.value)
-
-  genOnUpdate = field => ({value}) => {
-    this.state.value[field] = value
-    this.forceUpdate()
-  }
-
-  selectChange = field => ({target}) => {
-    this.state.value[field] = target.value
-    this.forceUpdate()
-  }
-
-  optify = val => {
-    return (<option value={val}> {val} </option>)
-  }
+  cancel = () => this.props.cancelAndRestore(this.initialState)
 
   render () {
-    return this.state.editing ? this.renderEditing(this.state.value) : this.renderPreview(this.state.value)
+    const {round, score, districtScore, moveToNextRound, evaluator} = this.props.evaluation
+
+    const actions = [
+      <RaisedButton style={{margin: 10}}
+        key='cancel' onClick={this.cancel} secondary={true} label="Cancel"/>,
+      <RaisedButton style={{margin: 10}}
+        key='done' onClick={this.props.done} primary={true} label="Done"/>
+    ]
+
+    return (
+      <Dialog title='Add Evaluation' open={true} modal={true}
+        actions={actions}
+      >
+
+        <div>
+          <SelectField
+            value={round || 'R1'}
+            onChange={this.onChange('round')}
+            floatingLabelText='Round'
+          >
+            {['R1', 'R2', 'R3', 'R4', 'R5', 'R6'].map(opt => (
+              <MenuItem value={opt} primaryText={opt} key={opt} />
+            ))}
+          </SelectField>
+        </div>
+
+        <div>
+          <SelectField
+            value={score}
+            onChange={this.onChange('score')}
+            floatingLabelText='Score'
+          >
+            {'123456789'.split('').map(opt => (
+              <MenuItem value={opt} primaryText={opt} key={opt} />
+            ))}
+          </SelectField>
+        </div>
+
+        <div>
+          <SelectField
+            value={districtScore}
+            onChange={this.onChange('districtScore')}
+            floatingLabelText='District Score'
+          >
+            {'123456789'.split('').map(opt => (
+              <MenuItem value={opt} primaryText={opt} key={opt} />
+            ))}
+          </SelectField>
+        </div>
+
+        <div>
+          <SelectField
+            value={moveToNextRound}
+            onChange={this.onChange('moveToNextRound')}
+            floatingLabelText='Move To Next Round'
+          >
+            {'Yes No Hold Reevaluate'.split(' ').map(opt => (
+              <MenuItem value={opt} primaryText={opt} key={opt} />
+            ))}
+          </SelectField>
+        </div>
+
+      </Dialog>
+    )
   }
-
-  renderPreview = ({evaluator, round, score, districtScore, moveOn}) => (
-    <Card onClick={() => this.setState({editing: true})}>
-      {!round && !evaluator && !score
-        ? 'Click to edit!'
-        : `by ${evaluator} in ${round}: ${score}`
-      }
-    </Card>
-  )
-
-  renderEditing = ({evaluator, round, score, districtScore, moveOn}) => (
-    <div id='evaluation-modal' style={{
-        position: 'fixed',
-        left: '50%',
-        top: '50%',
-        width: '500px',
-        height: '350px',
-        marginLeft: '-250px',
-        marginTop: '-150px',
-        borderRadius: '3px',
-        backgroundColor: 'white',
-        border: '1px solid black',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        // alignItems: 'center',
-        padding: '10px'
-      }}
-    >
-      <TextInput value={evaluator} placeholder='Evaluator' onUpdate={this.genOnUpdate('evaluator')} />
-
-      {this.renderLabel('Round')}
-      <select style={{width: '90%'}} value={round} onChange={this.selectChange('round')}>
-        <option disabled selected value />
-        {this.optify('R1')}
-        {this.optify('R2')}
-        {this.optify('R3')}
-        {this.optify('R4')}
-        {this.optify('R5')}
-        {this.optify('R6')}
-      </select>
-
-      {this.renderLabel('Score')}
-      <select style={{width: '90%'}} value={score} onChange={this.selectChange('score')}>
-        <option disabled selected value />
-        {this.optify('1')}
-        {this.optify('2')}
-        {this.optify('3')}
-        {this.optify('4')}
-        {this.optify('5')}
-        {this.optify('6')}
-        {this.optify('7')}
-        {this.optify('8')}
-        {this.optify('9')}
-      </select>
-
-      {this.renderLabel('District Score')}
-      <select style={{width: '90%'}} value={districtScore} onChange={this.selectChange('districtScore')}>
-        <option disabled selected value />
-        {this.optify('1')}
-        {this.optify('2')}
-        {this.optify('3')}
-        {this.optify('4')}
-        {this.optify('no')}
-      </select>
-
-      {this.renderLabel('Move On To Next Round')}
-      <select style={{width: '90%'}} value={moveOn} onChange={this.selectChange('moveOn')}>
-        <option disabled selected value />
-        {this.optify('Yes')}
-        {this.optify('No')}
-        {this.optify('Hold')}
-        {this.optify('Reevaluate')}
-        {this.optify('ni')}
-      </select>
-
-      <div>
-        <Button style={{width: '100px', marginTop: 20, display: 'inline-block'}} primary
-          onClick={_ => this.setState({editing: false})}>
-          Done
-        </Button>
-
-        <Button style={{width: '150px', float: 'right', marginTop: 20, display: 'inline-block'}}
-          onClick={_ => this.props.delete(this.props.idx)}>
-          Delete Forever
-        </Button>
-      </div>
-    </div>
-  )
-
-  renderLabel = label => (
-    <div style={{
-      margin: 5,
-      paddingBottom: 5,
-      fontWeight: 500,
-      fontSize: 16,
-      fontFamily: 'system-ui'
-    }}>
-      {label}
-    </div>
-  )
 }
