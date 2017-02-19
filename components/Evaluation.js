@@ -6,7 +6,7 @@ import MenuItem from 'material-ui/MenuItem'
 import RaisedButton from 'material-ui/RaisedButton'
 import SelectField from 'material-ui/SelectField'
 
-export default class extends React.Component {
+export default class Evaluation extends React.Component {
   componentWillMount () {
     this.initialState = this.props
   }
@@ -18,7 +18,9 @@ export default class extends React.Component {
   cancel = () => this.props.cancelAndRestore(this.initialState)
 
   render () {
-    const {round, score, districtScore, moveToNextRound, evaluator} = this.props.evaluation
+    const {
+      round, score, districtScore, moveToNextRound, evaluator, evaluatorName
+    } = this.props.evaluation
 
     const actions = [
       <RaisedButton style={{margin: 10}}
@@ -32,9 +34,15 @@ export default class extends React.Component {
         actions={actions}
       >
 
+        {`Evaluation performed by ${
+          (evaluator && evaluatorName)
+            ? evaluatorName
+            : 'you'
+        }`}
+
         <div>
           <SelectField
-            value={round || 'R1'}
+            value={round}
             onChange={this.onChange('round')}
             floatingLabelText='Round'
           >
@@ -46,7 +54,7 @@ export default class extends React.Component {
 
         <div>
           <SelectField
-            value={score}
+            value={(score || '').toString()}
             onChange={this.onChange('score')}
             floatingLabelText='Score'
           >

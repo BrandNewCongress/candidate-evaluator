@@ -1,13 +1,14 @@
 import React from 'react'
 import toSpaceCase from 'to-space-case'
 import Evaluation from './Evaluation'
+import store from 'store'
 
 import {Card, CardHeader, CardText} from 'material-ui/Card'
 import Paper from 'material-ui/Paper'
 import RaisedButton from 'material-ui/RaisedButton'
 import Subheader from 'material-ui/Subheader'
 
-export default class Nomations extends React.Component {
+export default class Evaluations extends React.Component {
   state = {
     editing: null
   }
@@ -25,11 +26,16 @@ export default class Nomations extends React.Component {
     this.props.mutate({evaluations: copy})
   }
 
-  setEdit = idx => ev => this.setState({editing: this.props.evaluations[idx]})
+  done = () => this.setState({editing: null})
+
+  setEdit = idx => ev => this.setState({editing: idx})
 
   newEval = ev => {
-    this.state.editing = this.props.evaluations.length
-    this.props.mutate({evaluations: this.props.evaluations.concat([{}])})
+    this.state.editing = (this.props.evaluations || []).length
+    this.props.mutate({evaluations: this.props.evaluations.concat([{
+      evaluator: [store.get('evaluator').id],
+      round: 'R1'
+    }])})
   }
 
   render () {
@@ -38,9 +44,11 @@ export default class Nomations extends React.Component {
 
     return (
       <Paper>
-        <div style={{display: 'flex'}}>
+        <div style={{display: 'flex', alignItems: 'center'}}>
           <Subheader> Evaluations </Subheader>
-          <RaisedButton primary={true} onClick={this.newEval}> New </RaisedButton>
+          <RaisedButton primary={true} onClick={this.newEval} style={{
+            marginRight: 10
+          }}> New </RaisedButton>
         </div>
 
         {evals.map((ev, idx) => (
@@ -58,6 +66,7 @@ export default class Nomations extends React.Component {
             evaluation={this.props.evaluations[editing]}
             mutateMe={this.mutateChild(editing)}
             cancelAndRestore={this.cancel(editing)}
+            done={this.done}
           />
         }
 

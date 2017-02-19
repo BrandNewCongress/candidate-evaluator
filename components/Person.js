@@ -9,7 +9,7 @@ export default class Person extends React.Component {
 
   render () {
     const {
-      profile, facebook, linkedin, twitter, gender, race, politicalParty,
+      profile, facebook, linkedIn, twitter, gender, race, politicalParty,
       religion
     } = this.props
 
@@ -44,10 +44,10 @@ export default class Person extends React.Component {
 
         <div style={fieldStyle}>
           <TextField
-            id='linkedin'
+            id='linkedIn'
             floatingLabelText='LinkedIn'
-            value={linkedin}
-            onChange={this.onChange('linkedin')}
+            value={linkedIn}
+            onChange={this.onChange('linkedIn')}
           />
         </div>
 
@@ -67,7 +67,7 @@ export default class Person extends React.Component {
             floatingLabelText='Gender'
           >
             {['Male', 'Female', 'Other'].map(v => (
-              <MenuItem value={v.toLowerCase()} primaryText={v} key={v} />
+              <MenuItem value={v} primaryText={v} key={v} />
             ))}
           </SelectField>
         </div>
@@ -78,7 +78,9 @@ export default class Person extends React.Component {
             onChange={this.onChange('race')}
             floatingLabelText='Race'
           >
-            {['Race Option 1', 'Race Option 2', 'Race Option 3'].map(v => (
+            {['Black', 'East Asian', 'South Asian', 'White - Caucasian',
+              'White - Jewish', 'Latino', 'American Indian/ Native American',
+              'Asian Pacific Islander', 'Hispanic'].map(v => (
               <MenuItem value={v.toLowerCase()} primaryText={v} key={v} />
             ))}
           </SelectField>
@@ -90,7 +92,7 @@ export default class Person extends React.Component {
             onChange={this.onChange('politicalParty')}
             floatingLabelText='Political Party'
           >
-            {['Political Party 1', 'Political Party 2', 'Political Party 3'].map(v => (
+            {['Democrat', 'Republican', 'Green', 'Independent', 'Unknown'].map(v => (
               <MenuItem value={v.toLowerCase()} primaryText={v} key={v} />
             ))}
           </SelectField>

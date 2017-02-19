@@ -25,7 +25,7 @@ export default class Nomations extends React.Component {
               {['relationshipToNominator', 'leadership', 'workHistory',
                 'politicalViews', 'publicSpeaking'].map(attr => (
                   <div>
-                    <Subheader style={{textTransform: 'capitalize'}}> {toSpaceCase(attr)} </Subheader>
+                    <Subheader key={attr} style={{textTransform: 'capitalize'}}> {toSpaceCase(attr)} </Subheader>
                     {nom[attr]}
                   </div>
               ))}
