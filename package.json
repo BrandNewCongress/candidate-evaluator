@@ -7,7 +7,8 @@
     "test": "test",
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p $PORT",
+    "heroku-postbuild": "heroku-nextjs-build"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
   },
   "homepage": "https://github.com/BrandNewCongress/candidate-evaluator#readme",
   "dependencies": {
+    "@mars/heroku-nextjs-build": "^1.1.0",
     "axios": "^0.15.3",
     "express": "^4.14.1",
     "material-ui": "^0.17.0",
