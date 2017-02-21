@@ -1,162 +1,175 @@
-import Form from '../components/forms/Form'
-import yup from 'yup'
+import '../lib/tap-event'
 import Router from 'next/router'
 import axios from 'axios'
-import { StyleSheet, css } from 'aphrodite'
-import {Button, Card} from 'belle'
-import bootstrapify from '../lib/bootstrapify'
+import store from 'store'
+import Person from '../components/Person'
+import Nominations from '../components/Nominations'
+import Evaluations from '../components/Evaluations'
 
-bootstrapify()
+import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
+import CircularProgress from 'material-ui/CircularProgress'
+import Dialog from 'material-ui/Dialog'
+import RaisedButton from 'material-ui/RaisedButton'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import Paper from 'material-ui/Paper'
+import TextField from 'material-ui/TextField'
 
-const baseUrl = 'http://localhost:8080/people/'
+const baseUrl = 'http://localhost:8080/person/'
 
-const styles = StyleSheet.create({
-  column: {
-    display: 'inline-block',
-    padding: '10px'
-  },
-  left: {
-    width: '55%'
-  },
-  right: {
-    width: '35%'
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between'
-  }
-})
-
-class EvaluationForm extends React.Component {
+export default class EvaluationForm extends React.Component {
   state = {
-    person: null,
+    evaluator: null,
+    person: {},
     error: null,
-    loading: null
+    loading: true,
+    submitting: false,
+    settingEvaluator: null
   }
 
-  async componentDidMount(props) {
-    console.log('router', Router.router.query.id)
-    const person = await axios.get(baseUrl + Router.router.query.id)
+  changed = []
+
+  componentWillMount () {
+    this.state.evaluator = store.get('evaluator')
+    this.state.settingEvaluator = this.state.evaluator == null
+  }
+
+  setError = error => this.setState({
+    error: error.response.data.message,
+    submitting: false,
+    loading: false
+  })
+
+  handlePerson = person => {
     if (person.data) {
-      this.setState({ person: person.data.fields })
+      this.changed = []
+      this.setState({
+        person: person.data,
+        loading: false,
+        submitting: false,
+        error: null
+      })
     } else {
-      this.setState({ error: 'There was an error loading that person' })
+      this.setError('Could not load person')
     }
   }
 
-  fields = [
-    {
-      name: 'email',
-      type: 'string',
-      label: 'Email',
-      schema: yup.string().transform((value) => value.replace(/\s/g, ''))
-        .required()
-        .email()
-    },
-    {
-      name: 'phone',
-      type: 'tel',
-      label: 'Phone',
-      schema: yup.string()
-    },
-    {
-      name: 'facebook',
-      type: 'string',
-      label: 'Facebook',
-      schema: yup.string()
-    },
-    {
-      name: 'linkedin',
-      type: 'string',
-      label: 'LinkedIn',
-      schema: yup.string()
-    },
-    {
-      name: 'profile',
-      type: 'string',
-      label: 'Profile',
-      schema: yup.string()
-    },
-    {
-      name: 'gender',
-      type: 'string',
-      label: 'Gender',
-      schema: yup.string()
-    },
-    {
-      name: 'race',
-      type: 'string',
-      label: 'Race',
-      schema: yup.string()
-    },
-    {
-      name: 'politicalParty',
-      type: 'string',
-      label: 'Political Party',
-      schema: yup.string()
-    }
-  ]
+  componentDidMount(props) {
+    axios.get(baseUrl + Router.router.query.id)
+    .then(this.handlePerson)
+    .catch(this.setError)
+  }
 
-  formSchema = yup.object(this.fields.reduce((acc, field) =>
-    Object.assign({[field.name]: field.schema}, acc)
-  , {}))
+  switchEvaluator = () => {
+    store.clear()
+    this.setState({
+      evaluator: null,
+      settingEvaluator: true
+    })
+  }
 
-  onSubmit = data => axios.put(baseUrl + Router.router.query.id, data)
+  reset = () => window.location.reload()
+
+  submit = () => {
+    this.setState({submitting: true})
+
+    axios.put(baseUrl + Router.router.query.id, this.getUpdateObject())
+    .then(this.handlePerson)
+    .catch(this.setError)
+  }
+
+  mutate = value => {
+    this.changed = this.changed.concat(Object.keys(value))
+    Object.assign(this.state.person, value)
+    this.forceUpdate()
+  }
+
+  getUpdateObject = () => {
+    const result = {}
+    this.changed.forEach(field => result[field] = this.state.person[field])
+    return result
+  }
 
   render() {
-    let { person, error, loading } = this.state
+    const { person, error, submitting, loading, evaluator, settingEvaluator } = this.state
 
-    // TODO remove dummy data
-    if (!person) {
-      person = {
-        name: 'Saikat Chakrabarti',
-        district: 'NY-10',
-        status: 'Round 1 - To Be Evaluated'
-      }
-    }
-
-    if (loading) {
-      return (
-        <div>
-          Loading...
-        </div>
-      )
-    } else {
-      return (
-        <div>
-          <Card className={css(styles.header)}>
-            <div>
-              {`${person.name} - ${person.district}`}
-              <br/>
-              {`Status: ${person.status}`}
-            </div>
-            <Button primary >
-              Submit Evaluation
-            </Button>
-          </Card>
-
-          <Form
-            schema={this.formSchema}
-          >
-            <div className={css(styles.column, styles.left)}>
-              {this.fields.slice(0, 5).map(this.renderField)}
-            </div>
-
-            <div className={css(styles.column, styles.right)}>
-              {this.fields.slice(5).map(this.renderField)}
-            </div>
-
-          </Form>
-        </div>
-      )
-    }
-  }
-
-  renderField (config) {
     return (
-      <Form.Field {...config} />
+      <MuiThemeProvider>
+        {loading
+          ? (
+              <div style={{
+                height: '100%',
+                width: '100%',
+                transform: 'translate(50vw, 50vh)'
+              }}>
+                <CircularProgress />
+              </div>
+            )
+          : (
+              <div>
+                {!settingEvaluator
+                  ? (
+                      <Paper>
+                        <Card expanded={true}>
+                          <CardHeader
+                            title={`${person.name} - ${person.district}`}
+                            subtitle={`Status: ${person.nominationStatus}`}
+                          />
+                          <CardActions>
+                            <RaisedButton style={{width: '140px'}} onClick={this.switchEvaluator}> Switch Evaluator </RaisedButton>
+                            <RaisedButton onClick={this.reset} secondary={true} >Reset All</RaisedButton>
+                            <RaisedButton onClick={this.submit} primary={true} >Submit</RaisedButton>
+                          </CardActions>
+                          <CardText>
+                            {`Currently evaluating as ${evaluator.name}`}
+                            {submitting && <CircularProgress />}
+                            <span style={{color: 'red'}}>
+                              {error}
+                            </span>
+                          </CardText>
+                        </Card>
+                        <br />
+                        <Person {...person} mutate={this.mutate} />
+                        <br />
+                        <Nominations nomations={person.nominations} mutate={this.mutate} />
+                        <br />
+                        <Evaluations evaluations={person.evaluations} mutate={this.mutate} />
+                      </Paper>
+                    )
+                  : (
+                      <Dialog open={true}
+                        actions={[
+                          <RaisedButton primary={true} label='Find Me' onClick={() => {
+                            const params = new URLSearchParams()
+                            params.append('name', this.refs.name.input.value)
+
+                            axios.get(`${baseUrl}byname?${params.toString()}`)
+                            .then(found => {
+                              if (found) {
+                                store.set('evaluator', {id: found.data.id, name: found.data.name})
+                                this.setState({
+                                  evaluator: {id: found.data.id, name: found.data.name},
+                                  settingEvaluator: false,
+                                  error: null
+                                })
+                              }
+                            })
+                            .catch(err => {
+                              this.setState({error: 'Not found - make sure you type your name exactly right'})
+                            })
+                          }}/>
+                        ]}
+                      >
+                        Hey, who is evaluating right now? (Write your name)
+                        <br />
+                        <TextField id='name' ref='name' />
+                        <span style={{color: 'red'}}>{error}</span>
+                      </Dialog>
+                    )
+                }
+              </div>
+            )
+        }
+      </MuiThemeProvider>
     )
   }
 }
-
-export default EvaluationForm
