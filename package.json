@@ -30,6 +30,7 @@
   "homepage": "https://github.com/BrandNewCongress/candidate-evaluator#readme",
   "dependencies": {
     "@mars/heroku-nextjs-build": "^1.1.0",
+    "aphrodite": "^1.1.0",
     "axios": "^0.15.3",
     "express": "^4.14.1",
     "material-ui": "^0.17.0",
