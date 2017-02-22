@@ -7,7 +7,7 @@
     "test": "test",
     "dev": "next",
     "build": "next build",
-    "start": "next start -p $PORT",
+    "start": "NODE_ENV=production node server.js",
     "heroku-postbuild": "heroku-nextjs-build"
   },
   "engines": {
@@ -43,5 +43,8 @@
   },
   "devDependencies": {
     "json-loader": "^0.5.4"
+  },
+  "next": {
+    "serverHandler": "./server.js"
   }
 }
