@@ -81,7 +81,7 @@ export default class Person extends React.Component {
             {['Black', 'East Asian', 'South Asian', 'White - Caucasian',
               'White - Jewish', 'Latino', 'American Indian/ Native American',
               'Asian Pacific Islander', 'Hispanic'].map(v => (
-              <MenuItem value={v.toLowerCase()} primaryText={v} key={v} />
+              <MenuItem value={v} primaryText={v} key={v} />
             ))}
           </SelectField>
         </div>
@@ -93,7 +93,7 @@ export default class Person extends React.Component {
             floatingLabelText='Political Party'
           >
             {['Democrat', 'Republican', 'Green', 'Independent', 'Unknown'].map(v => (
-              <MenuItem value={v.toLowerCase()} primaryText={v} key={v} />
+              <MenuItem value={v} primaryText={v} key={v} />
             ))}
           </SelectField>
         </div>
