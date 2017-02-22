@@ -13,7 +13,7 @@ export default class Person extends React.Component {
       religion
     } = this.props
 
-    const fieldStyle = {margin: 5}
+    const fieldStyle = {margin: 10}
 
     return (
       <Paper style={{

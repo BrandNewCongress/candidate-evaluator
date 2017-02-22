@@ -5,6 +5,7 @@ import store from 'store'
 import Person from '../components/Person'
 import Nominations from '../components/Nominations'
 import Evaluations from '../components/Evaluations'
+import muiTheme from './bnc-theme'
 
 import { Card, CardActions, CardHeader, CardText } from 'material-ui/Card'
 import CircularProgress from 'material-ui/CircularProgress'
@@ -101,7 +102,7 @@ export default class EvaluationForm extends React.Component {
     const { person, error, submitting, homepage, loading, evaluator, settingEvaluator } = this.state
 
     return (
-      <MuiThemeProvider>
+      <MuiThemeProvider muiTheme={muiTheme}>
         {loading || homepage
           ? homepage
             ? (
@@ -140,9 +141,10 @@ export default class EvaluationForm extends React.Component {
                           <CardText>
                             {`Currently evaluating as ${evaluator.name}`}
                             {submitting && <CircularProgress />}
-                            <span style={{color: 'red'}}>
-                              {error}
-                            </span>
+                            {error
+                              ? (<span style={{color: 'red'}}> <br/> {error} </span>)
+                              : null
+                            }
                           </CardText>
                         </Card>
                         <br />
