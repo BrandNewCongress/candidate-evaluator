@@ -120,7 +120,7 @@ export default class EvaluationForm extends React.Component {
                       <Paper>
                         <Card expanded={true}>
                           <CardHeader
-                            title={`${person.name} ${Array.isArray(person.district)
+                            title={`${person.name} ${Array.isArray(person.district) && person.district[0]
                               ? `- ${person.district[0].stateAbbreviation[0]} ${person.district[0].congressionalDistrictCode}`
                               : ''
                             }`}
