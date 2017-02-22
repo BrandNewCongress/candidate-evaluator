@@ -16,7 +16,7 @@ import TextField from 'material-ui/TextField'
 
 const baseUrl = () => window.location.href.includes('localhost')
   ? 'http://localhost:8080/person/'
-  : 'https://api.brandnewcongress.org/'
+  : 'https://api.brandnewcongress.org/person/'
 
 export default class EvaluationForm extends React.Component {
   state = {
