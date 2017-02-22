@@ -16,7 +16,7 @@ import TextField from 'material-ui/TextField'
 
 const baseUrl = () => window.location.href.includes('localhost')
   ? 'http://localhost:8080/person/'
-  : 'https://api.brandnewcongress.org'
+  : 'https://api.brandnewcongress.org/'
 
 export default class EvaluationForm extends React.Component {
   state = {
@@ -32,7 +32,7 @@ export default class EvaluationForm extends React.Component {
   changed = []
 
   getId = () => {
-    return Router.router.query.id
+    return (Router.router && Router.router.query) ? Router.router.query.id : null
   }
 
   componentWillMount () {
