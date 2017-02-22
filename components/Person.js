@@ -74,7 +74,7 @@ export default class Person extends React.Component {
 
         <div style={fieldStyle}>
           <SelectField
-            value={race}
+            value={Array.isArray(race) ? race[0] : race}
             onChange={this.onChange('race')}
             floatingLabelText='Race'
           >

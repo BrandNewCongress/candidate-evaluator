@@ -49,7 +49,7 @@ export default class EvaluationForm extends React.Component {
   })
 
   handlePerson = person => {
-    if (person.data) {
+    if (person && person.data) {
       this.changed = []
       this.setState({
         person: person.data,
@@ -120,7 +120,10 @@ export default class EvaluationForm extends React.Component {
                       <Paper>
                         <Card expanded={true}>
                           <CardHeader
-                            title={`${person.name} - ${person.district}`}
+                            title={`${person.name} ${Array.isArray(person.district)
+                              ? `- ${person.district[0].stateAbbreviation[0]} ${person.district[0].congressionalDistrictCode}`
+                              : ''
+                            }`}
                             subtitle={`Status: ${person.nominationStatus}`}
                           />
                           <CardActions>

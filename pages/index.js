@@ -35,6 +35,7 @@ export default class EvaluationForm extends React.Component {
 
   submit = () => {
     this.setState({submitting: true})
+    this.changed = []
 
     axios.put(baseUrl() + this.getId(), this.getUpdateObject())
     .then(this.handlePerson)
