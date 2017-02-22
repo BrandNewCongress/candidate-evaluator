@@ -10,6 +10,9 @@
     "start": "next start -p $PORT",
     "heroku-postbuild": "heroku-nextjs-build"
   },
+  "engines": {
+    "node": "6.9.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/BrandNewCongress/candidate-evaluator.git"

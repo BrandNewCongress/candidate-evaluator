@@ -14,10 +14,13 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Paper from 'material-ui/Paper'
 import TextField from 'material-ui/TextField'
 
-const baseUrl = 'http://localhost:8080/person/'
+const baseUrl = () => window.location.href.includes('localhost')
+  ? 'http://localhost:8080/person/'
+  : 'https://api.brandnewcongress.org'
 
 export default class EvaluationForm extends React.Component {
   state = {
+    homepage: true,
     evaluator: null,
     person: {},
     error: null,
@@ -28,7 +31,12 @@ export default class EvaluationForm extends React.Component {
 
   changed = []
 
+  getId = () => {
+    return Router.router.query.id
+  }
+
   componentWillMount () {
+    this.state.homepage = this.getId() == null
     this.state.evaluator = store.get('evaluator')
     this.state.settingEvaluator = this.state.evaluator == null
   }
@@ -54,7 +62,7 @@ export default class EvaluationForm extends React.Component {
   }
 
   componentDidMount(props) {
-    axios.get(baseUrl + Router.router.query.id)
+    axios.get(baseUrl() + this.getId())
     .then(this.handlePerson)
     .catch(this.setError)
   }
@@ -72,7 +80,7 @@ export default class EvaluationForm extends React.Component {
   submit = () => {
     this.setState({submitting: true})
 
-    axios.put(baseUrl + Router.router.query.id, this.getUpdateObject())
+    axios.put(baseUrl() + this.getId(), this.getUpdateObject())
     .then(this.handlePerson)
     .catch(this.setError)
   }
@@ -90,20 +98,30 @@ export default class EvaluationForm extends React.Component {
   }
 
   render() {
-    const { person, error, submitting, loading, evaluator, settingEvaluator } = this.state
+    const { person, error, submitting, homepage, loading, evaluator, settingEvaluator } = this.state
 
     return (
       <MuiThemeProvider>
-        {loading
-          ? (
-              <div style={{
-                height: '100%',
-                width: '100%',
-                transform: 'translate(50vw, 50vh)'
-              }}>
-                <CircularProgress />
-              </div>
-            )
+        {loading || homepage
+          ? homepage
+            ? (
+                <div style={{
+                  height: '100%',
+                  width: '100%',
+                  transform: 'translate(50vw, 50vh)'
+                }}>
+                  You're at the homepage!
+                </div>
+              )
+            : (
+                <div style={{
+                  height: '100%',
+                  width: '100%',
+                  transform: 'translate(50vw, 50vh)'
+                }}>
+                  <CircularProgress />
+                </div>
+              )
           : (
               <div>
                 {!settingEvaluator
@@ -142,7 +160,7 @@ export default class EvaluationForm extends React.Component {
                             const params = new URLSearchParams()
                             params.append('name', this.refs.name.input.value)
 
-                            axios.get(`${baseUrl}byname?${params.toString()}`)
+                            axios.get(`${baseUrl()}byname?${params.toString()}`)
                             .then(found => {
                               if (found) {
                                 store.set('evaluator', {id: found.data.id, name: found.data.name})
