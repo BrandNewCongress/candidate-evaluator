@@ -71,7 +71,7 @@ export default class EvaluationForm extends React.Component {
               try {
                 const found = await (byName
                   ? axios.get(`${baseUrl()}byname?${params.toString()}`)
-                  : axios.get(`${baseUrl()}/${this.refs.id.input.value}`))
+                  : axios.get(`${baseUrl()}${this.refs.id.input.value}`))
 
                 if (found) {
                   const id = found.data.id
