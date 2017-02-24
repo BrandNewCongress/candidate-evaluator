@@ -22,13 +22,17 @@ export default class Nomations extends React.Component {
               showExpandableButton={true}
             />
             <CardText expandable={true}>
-              {['profile', 'otherLinks', 'facebook', 'linkedIn', 'relationshipToNominator',
-                'leadership', 'workHistory', 'politicalViews', 'publicSpeaking'].map(attr => (
-                  <div>
-                    <Subheader key={attr} style={{textTransform: 'capitalize'}}> {toSpaceCase(attr)} </Subheader>
-                    {nom[attr]}
-                  </div>
-              ))}
+              {['profile', 'otherLinks', 'facebook', 'linkedIn', 'twitter',
+                'relationshipToNominator', 'leadership', 'workHistory',
+                'politicalViews', 'publicSpeaking'].map(attr => nom[attr]
+                  ? (
+                      <div>
+                        <Subheader key={attr} style={{textTransform: 'capitalize'}}> {toSpaceCase(attr)} </Subheader>
+                        {nom[attr]}
+                      </div>
+                    )
+                  : null
+              )}
             </CardText>
           </Card>
         ))}

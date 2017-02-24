@@ -55,15 +55,17 @@ export default class Evaluation extends React.Component {
         <br/>
 
         {`Evaluation performed by ${
-          (evaluator && evaluatorName)
+          (evaluator && evaluator != store.get('evaluator').id)
             ? evaluatorName
+              ? evaluatorName
+              : evaluator
             : 'you'
         }`}
 
         <br/>
         <br/>
 
-        {cannotEdit && `Only ${evaluatorName} can edit this evalution`}
+        {cannotEdit && `Only ${evaluatorName || evaluator} can edit this evalution`}
 
         <div>
           <SelectField

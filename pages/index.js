@@ -6,6 +6,7 @@ import axios from 'axios'
 import muiTheme from '../bnc-theme'
 import store from 'store'
 
+import CircularProgress from 'material-ui/CircularProgress'
 import Create from 'material-ui/svg-icons/content/create'
 import IconButton from 'material-ui/IconButton'
 import { List, ListItem } from 'material-ui/List'
@@ -39,13 +40,15 @@ export default class EvaluationForm extends React.Component {
   }
 
   getAssignments = () => {
+    this.setState({loading: true})
+
     const params = new URLSearchParams()
     params.append('name', store.get('evaluator').name)
 
     axios.get(`${coreUrl()}assignments?${params.toString()}`)
     .then(assignments => assignments.data
-      ? this.setState({assignments: assignments.data})
-      : this.setState({error: 'Could not load assignments'})
+      ? this.setState({loading: false, assignments: assignments.data})
+      : this.setState({loading: false, error: 'Could not load assignments'})
     )
     .catch(error => this.setState({error}))
   }
@@ -54,6 +57,15 @@ export default class EvaluationForm extends React.Component {
     const {
       byName, loading, error, settingEvaluator, assignments
     } = this.state
+
+    const undone = []
+    const done = []
+
+    const myId = (me => me ? me.id : null)(store.get('evaluator'))
+    assignments.forEach(a => !a.evaluators.includes(myId)
+      ? undone.push(a)
+      : done.push(a)
+    )
 
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -75,72 +87,34 @@ export default class EvaluationForm extends React.Component {
                   style={{width: 200}}
                   onClick={() => this.setState({settingEvaluator: true})}
                 />
-                <Subheader>Here's the evaluations you've been assigned</Subheader>
+                {loading && <CircularProgress />}
+                <Subheader>Evaluations you've been assigned</Subheader>
                 <List>
-                  {assignments
+                  {undone
                     .sort((a,b) => new Date(a.dateCreated) - new Date(b.dateCreated))
                     .map(a => (
-                    <ListItem
-                      primaryText={a.name}
-                      onClick={() => window.location.pathname = `/${a.id}`}
-                      secondaryText={`by ${a.nominator}`}
-                      rightIcon={<Create />}
-                    />
+                      <ListItem
+                        primaryText={a.name}
+                        onClick={() => window.location.pathname = `/${a.id}`}
+                        rightIcon={<Create />}
+                      />
+                  ))}
+                </List>
+                <Subheader> Evaluations you've already completed</Subheader>
+                <List>
+                  {done
+                    .sort((a,b) => new Date(a.dateCreated) - new Date(b.dateCreated))
+                    .map(a => (
+                      <ListItem
+                        primaryText={a.name}
+                        onClick={() => window.location.pathname = `/${a.id}`}
+                        rightIcon={<Create />}
+                      />
                   ))}
                 </List>
               </Paper>
             )
         }
-
-        {/* <Dialog open={true}
-          actions={[
-            <RaisedButton primary={true} label='Find Nominee' onClick={async () => {
-              const params = new URLSearchParams()
-              params.append('name', byName
-                ? this.refs.name.input.value
-                : this.refs.id.input.value
-              )
-
-              try {
-                const found = await (byName
-                  ? axios.get(`${baseUrl()}byname?${params.toString()}`)
-                  : axios.get(`${baseUrl()}${this.refs.id.input.value}`))
-
-                if (found) {
-                  const id = found.data.id
-                  window.location.pathname = `/${id}`
-                }
-              } catch (ex) {
-                this.setState({error:
-                  `Not found - make sure you type the ${byName ? 'name': 'id'} exactly right`})
-              }
-            }}/>
-          ]}
-        >
-          Hello!
-          <br/>
-          <br/>
-          Please either the exact name OR Airtable ID of the person you would like to evaluate
-          <br />
-          <br />
-
-          <RadioButtonGroup name='find-method' onChange={(_, value) => this.setState({byName: value == 'byname'})} defaultSelected='byname'>
-            <RadioButton
-              value='byname'
-              label='By Name'
-            />
-            <RadioButton
-              value='byid'
-              label='By Airtable ID'
-            />
-          </RadioButtonGroup>
-
-          {byName
-            ? <TextField id='name' ref='name' floatingLabelText={'Enter the Nominee\'s Name'}/>
-            : <TextField id='id' ref='id' floatingLabelText={'Enter the Nominee\'s Airtable ID'}/>
-          }
-          <span style={{color: 'red'}}>{error}</span>
-        </Dialog> */}
       </MuiThemeProvider>
     )
   }
