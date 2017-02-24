@@ -21,7 +21,10 @@ export default class Evaluations extends React.Component {
 
   cancel = idx => initialValue => {
     const copy = this.props.evaluations.slice().map(o => Object.assign({}, o))
-    Object.assign(copy[idx], initialValue)
+    if (!(initialValue.score || initialValue.districtScore || initialValue.moveToNextRound))
+      copy.splice(idx, 1)
+    else
+      Object.assign(copy[idx], initialValue)
     this.state.editing = null
     this.props.mutate({evaluations: copy})
   }

@@ -22,8 +22,8 @@ export default class Nomations extends React.Component {
               showExpandableButton={true}
             />
             <CardText expandable={true}>
-              {['relationshipToNominator', 'leadership', 'workHistory',
-                'politicalViews', 'publicSpeaking'].map(attr => (
+              {['profile', 'otherLinks', 'facebook', 'linkedIn', 'relationshipToNominator',
+                'leadership', 'workHistory', 'politicalViews', 'publicSpeaking'].map(attr => (
                   <div>
                     <Subheader key={attr} style={{textTransform: 'capitalize'}}> {toSpaceCase(attr)} </Subheader>
                     {nom[attr]}

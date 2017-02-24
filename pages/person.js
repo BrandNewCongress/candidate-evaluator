@@ -28,7 +28,8 @@ export default class EvaluationForm extends React.Component {
     error: null,
     loading: true,
     submitting: false,
-    settingEvaluator: null
+    settingEvaluator: null,
+    noProfileError: false
   }
 
   changed = []
@@ -79,6 +80,18 @@ export default class EvaluationForm extends React.Component {
   reset = () => window.location.reload()
 
   submit = () => {
+    const myId = store.get('evaluator').id
+
+    if (
+      !this.changed.includes('profile') &&
+      this.state.person.evaluations
+      .filter(ev =>
+        ev.evaluator == myId && ev.id !== undefined
+      )
+      .length == 0
+    )
+      return this.setState({noProfileError: true})
+
     this.setState({submitting: true})
 
     axios.put(baseUrl() + this.getId(), this.getUpdateObject())
@@ -99,7 +112,15 @@ export default class EvaluationForm extends React.Component {
   }
 
   render() {
-    const { person, error, submitting, loading, evaluator, settingEvaluator } = this.state
+    const {
+      person, error, submitting, loading, evaluator, settingEvaluator, noProfileError
+    } = this.state
+
+    const alert = noProfileError && (
+      <Dialog open={true} onRequestClose={() => this.setState({noProfileError: false})}>
+        Please edit the nominee's profile with either a summary of their qualifications, or a note about the lack thereof
+      </Dialog>
+    )
 
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -115,15 +136,30 @@ export default class EvaluationForm extends React.Component {
             )
           : (
               <div>
+                {alert}
                 {!settingEvaluator
                   ? (
                       <Paper>
                         <Card expanded={true}>
                           <CardHeader
-                            title={`${person.name} ${Array.isArray(person.district) && person.district[0]
-                              ? `- ${person.district[0].stateAbbreviation[0]} ${person.district[0].congressionalDistrictCode}`
-                              : ''
-                            }`}
+                            title={
+                              <span>
+                                {person.name}
+                                <span>{' - '}
+                                  <a href={`https://airtable.com/shrTgt2cTXY8uPBhL/tblZgOfTGnINfZviF/${
+                                    Array.isArray(person.district) && person.district[0]
+                                      ? person.district[0].id
+                                      : ''}`
+                                    }
+                                  >
+                                    {Array.isArray(person.district) && person.district[0]
+                                      ? `${person.district[0].stateAbbreviation[0]} ${person.district[0].congressionalDistrictCode}`
+                                      : `Unknown district`
+                                    }
+                                  </a>
+                                </span>
+                              </span>
+                            }
                             subtitle={`Status: ${person.nominationStatus}`}
                           />
                           <CardActions>

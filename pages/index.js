@@ -1,65 +1,98 @@
 import '../lib/tap-event'
+import LogIn from '../components/LogIn'
 import React from 'react'
 import Router from 'next/router'
 import axios from 'axios'
 import muiTheme from '../bnc-theme'
+import store from 'store'
 
-import Dialog from 'material-ui/Dialog'
-import RaisedButton from 'material-ui/RaisedButton'
-import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton'
+import Create from 'material-ui/svg-icons/content/create'
+import IconButton from 'material-ui/IconButton'
+import { List, ListItem } from 'material-ui/List'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Paper from 'material-ui/Paper'
-import TextField from 'material-ui/TextField'
+// import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton'
+import RaisedButton from 'material-ui/RaisedButton'
+import Subheader from 'material-ui/Subheader'
 
-const baseUrl = () => window.location.href.includes('localhost')
-  ? 'http://localhost:8080/person/'
-  : 'https://api.brandnewcongress.org/person/'
+const coreUrl = () => window.location.href.includes('localhost')
+  ? 'http://localhost:8080/'
+  : 'https://api.brandnewcongress.org/'
+
+const baseUrl = () => `${coreUrl()}person/`
 
 export default class EvaluationForm extends React.Component {
   state = {
     byName: true,
     error: null,
-    loading: false
+    loading: false,
+    settingEvaluator: true,
+    assignments: []
   }
 
-  changed = []
-
-  getId = () => {
-    return (Router.router && Router.router.query) ? Router.router.query.id : null
+  componentWillMount () {
+    const evaluator = store.get('evaluator')
+    if (evaluator) {
+      this.state.settingEvaluator = false
+      this.getAssignments()
+    }
   }
 
-  setError = error => this.setState({
-    error: error.response.data.message,
-    loading: false
-  })
+  getAssignments = () => {
+    const params = new URLSearchParams()
+    params.append('name', store.get('evaluator').name)
 
-  submit = () => {
-    this.setState({submitting: true})
-    this.changed = []
-
-    axios.put(baseUrl() + this.getId(), this.getUpdateObject())
-    .then(this.handlePerson)
-    .catch(this.setError)
-  }
-
-  mutate = value => {
-    this.changed = this.changed.concat(Object.keys(value))
-    Object.assign(this.state.person, value)
-    this.forceUpdate()
-  }
-
-  getUpdateObject = () => {
-    const result = {}
-    this.changed.forEach(field => result[field] = this.state.person[field])
-    return result
+    axios.get(`${coreUrl()}assignments?${params.toString()}`)
+    .then(assignments => assignments.data
+      ? this.setState({assignments: assignments.data})
+      : this.setState({error: 'Could not load assignments'})
+    )
+    .catch(error => this.setState({error}))
   }
 
   render() {
-    const { byName, loading, error } = this.state
+    const {
+      byName, loading, error, settingEvaluator, assignments
+    } = this.state
 
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
-        <Dialog open={true}
+        {settingEvaluator
+          ? (
+              <LogIn close={() => {
+                this.getAssignments()
+                this.setState({settingEvaluator: false})
+              }} />
+            )
+          : (
+              <Paper style={{
+                height: '100%', width: '100%', display: 'flex',
+                flexDirection: 'column', padding: 10
+              }}>
+                <Subheader>{`Hey ${store.get('evaluator').name}!`}</Subheader>
+                <RaisedButton
+                  label={`Not ${store.get('evaluator').name}?`}
+                  style={{width: 200}}
+                  onClick={() => this.setState({settingEvaluator: true})}
+                />
+                <Subheader>Here's the evaluations you've been assigned</Subheader>
+                <List>
+                  {assignments
+                    .sort((a,b) => new Date(a.dateCreated) - new Date(b.dateCreated))
+                    .map(a => (
+                    <ListItem
+                      primaryText={a.name}
+                      onClick={() => window.location.pathname = `/${a.id}`}
+                      secondaryText={`by ${a.nominator}`}
+                      rightIcon={<Create />}
+                    />
+                  ))}
+                </List>
+              </Paper>
+            )
+        }
+
+        {/* <Dialog open={true}
           actions={[
             <RaisedButton primary={true} label='Find Nominee' onClick={async () => {
               const params = new URLSearchParams()
@@ -107,7 +140,7 @@ export default class EvaluationForm extends React.Component {
             : <TextField id='id' ref='id' floatingLabelText={'Enter the Nominee\'s Airtable ID'}/>
           }
           <span style={{color: 'red'}}>{error}</span>
-        </Dialog>
+        </Dialog> */}
       </MuiThemeProvider>
     )
   }

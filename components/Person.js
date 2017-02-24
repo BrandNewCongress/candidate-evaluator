@@ -1,16 +1,41 @@
 import React from 'react'
+import ChipInput from 'material-ui-chip-input'
 import MenuItem from 'material-ui/MenuItem'
 import Paper from 'material-ui/Paper'
 import SelectField from 'material-ui/SelectField'
 import TextField from 'material-ui/TextField'
+import Toggle from 'material-ui/Toggle'
 
 export default class Person extends React.Component {
-  onChange = name => (ev, idx, value) => this.props.mutate({[name]: value || ev.target.value})
+  raceOptions = [
+    'Black', 'East Asian', 'South Asian', 'White - Caucasian',
+    'White - Jewish', 'Latino', 'American Indian/ Native American',
+    'Asian Pacific Islander', 'Hispanic'
+  ]
+
+  occupationOptions = [
+    'Military', 'Education', 'Healthcare', 'Finance', 'Media/ Communications',
+    'Energy', 'Engineer', 'Agriculture', 'Business Owner', 'Manufacturing',
+    'Law', 'Politics', 'Social Work', 'Technology', 'Pastor', 'Architecture',
+    'Food Services', 'Academia/ Research', 'Systematics', 'Marketing and Advertising',
+    'Nonprofit Organizationa Management', 'Banking', 'Human Resources',
+    'Environmental', 'Sports', 'Tourism', 'Sociology', 'Missionary',
+    'Social service / Law enforcement (police, firefighter, etc.)',
+    'Stay at Home Parent', 'Musician', 'Artist', 'Other', 'Student'
+  ]
+
+  potentialVolunteerOptions = [
+    'Connector', 'Candidate Research', 'District Specialist', 'Candidate Caller',
+    'Outreach', 'Tech'
+  ]
+
+  onChange = name => (ev, idx, value) =>
+    this.props.mutate({[name]: value !== undefined ? value : ev.target.value})
 
   render () {
     const {
       profile, facebook, linkedIn, twitter, gender, race, politicalParty,
-      religion
+      religion, occupations, potentialVolunteer
     } = this.props
 
     const fieldStyle = {margin: 10}
@@ -74,20 +99,6 @@ export default class Person extends React.Component {
 
         <div style={fieldStyle}>
           <SelectField
-            value={Array.isArray(race) ? race[0] : race}
-            onChange={this.onChange('race')}
-            floatingLabelText='Race'
-          >
-            {['Black', 'East Asian', 'South Asian', 'White - Caucasian',
-              'White - Jewish', 'Latino', 'American Indian/ Native American',
-              'Asian Pacific Islander', 'Hispanic'].map(v => (
-              <MenuItem value={v} primaryText={v} key={v} />
-            ))}
-          </SelectField>
-        </div>
-
-        <div style={fieldStyle}>
-          <SelectField
             value={politicalParty}
             onChange={this.onChange('politicalParty')}
             floatingLabelText='Political Party'
@@ -97,6 +108,101 @@ export default class Person extends React.Component {
             ))}
           </SelectField>
         </div>
+
+        <div style={fieldStyle}>
+          <SelectField
+            value={religion}
+            onChange={this.onChange('religion')}
+            floatingLabelText='Religion'
+          >
+            {[ "Evangelical", "Hindu", "Muslim", "Buddhist", "Jewish", "Other",
+              "Mormon", "Baptist", "Christian - Other", "Catholic",
+              "Christian - AME"].map(v => (
+                <MenuItem value={v} primaryText={v} key={v} />
+            ))}
+          </SelectField>
+        </div>
+
+        <div style={fieldStyle}>
+          <ChipInput
+            id='race'
+            value={race || []}
+            dataSource={this.raceOptions}
+            floatingLabelText='Race'
+            onRequestAdd={val =>
+              this.onChange('race')(undefined, undefined,
+                (race || []).concat(
+                  Array.isArray(val)
+                    ? val.filter(v => this.raceOptions.includes(val))
+                    : this.raceOptions.includes(val)
+                      ? [val]
+                      : []
+                )
+              )
+            }
+            onRequestDelete={([val, idx]) => {
+              const copy = race.slice()
+              copy.splice(idx, 1)
+              this.onChange('race')(undefined, undefined, copy)
+            }}
+          >
+          </ChipInput>
+        </div>
+
+        <div style={fieldStyle}>
+          <ChipInput
+            id='occupations'
+            value={occupations || []}
+            dataSource={this.occupationOptions}
+            floatingLabelText='Occupation'
+            onRequestAdd={val =>
+              this.onChange('occupations')(undefined, undefined,
+                (occupations || []).concat(
+                  Array.isArray(val)
+                    ? val.filter(v => this.occupationOptions.includes(val))
+                    : this.occupationOptions.includes(val)
+                      ? [val]
+                      : []
+                )
+              )
+            }
+            onRequestDelete={([val, idx]) => {
+              const copy = occupations.slice()
+              copy.splice(idx, 1)
+              this.onChange('occupations')(undefined, undefined, copy)
+            }}
+          >
+          </ChipInput>
+        </div>
+
+        <div style={{...fieldStyle,
+          display: 'flex', alignItems: 'flex-end', paddingBottom: 10,
+          width: 246, paddingRight: 10
+        }}>
+          <ChipInput
+            id='potentialVolunteer'
+            floatingLabelText='Potential Volunteer'
+            value={potentialVolunteer || []}
+            dataSource={this.potentialVolunteerOptions}
+            onRequestAdd={val =>
+              this.onChange('potentialVolunteer')(undefined, undefined,
+                (potentialVolunteer || []).concat(
+                  Array.isArray(val)
+                    ? val.filter(v => this.potentialVolunteerOptions.includes(val))
+                    : this.potentialVolunteerOptions.includes(val)
+                      ? [val]
+                      : []
+                )
+              )
+            }
+            onRequestDelete={([val, idx]) => {
+              const copy = potentialVolunteer.slice()
+              copy.splice(idx, 1)
+              this.onChange('potentialVolunteer')(undefined, undefined, copy)
+            }}
+          />
+        </div>
+
       </Paper>
     )
   }
