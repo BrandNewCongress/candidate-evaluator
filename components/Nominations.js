@@ -22,7 +22,7 @@ export default class Nomations extends React.Component {
               showExpandableButton={true}
             />
             <CardText expandable={true}>
-              {['profile', 'otherLinks', 'facebook', 'linkedIn', 'twitter',
+              {['source', 'profile', 'otherLinks', 'facebook', 'linkedIn', 'twitter',
                 'relationshipToNominator', 'leadership', 'workHistory',
                 'politicalViews', 'publicSpeaking'].map(attr => nom[attr]
                   ? (

@@ -103,7 +103,7 @@ export default class EvaluationForm extends React.Component {
                 <Subheader> Evaluations you've already completed</Subheader>
                 <List>
                   {done
-                    .sort((a,b) => new Date(a.dateCreated) - new Date(b.dateCreated))
+                    .sort((a,b) => new Date(b.dateCreated) - new Date(a.dateCreated))
                     .map(a => (
                       <ListItem
                         primaryText={a.name}

@@ -35,7 +35,7 @@ export default class Person extends React.Component {
   render () {
     const {
       profile, facebook, linkedIn, twitter, gender, race, politicalParty,
-      religion, occupations, potentialVolunteer
+      religion, occupations, potentialVolunteer, otherLinks
     } = this.props
 
     const fieldStyle = {margin: 10}
@@ -200,6 +200,15 @@ export default class Person extends React.Component {
               copy.splice(idx, 1)
               this.onChange('potentialVolunteer')(undefined, undefined, copy)
             }}
+          />
+        </div>
+
+        <div style={fieldStyle}>
+          <TextField
+            id='otherLinks'
+            floatingLabelText='Other Links'
+            value={otherLinks}
+            onChange={this.onChange('otherLinks')}
           />
         </div>
 
