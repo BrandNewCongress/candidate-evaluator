@@ -62,7 +62,7 @@ export default class EvaluationForm extends React.Component {
     const done = []
 
     const myId = (me => me ? me.id : null)(store.get('evaluator'))
-    assignments.forEach(a => !a.evaluators.includes(myId)
+    assignments.forEach(a => a.evaluators && !a.evaluators.includes(myId)
       ? undone.push(a)
       : done.push(a)
     )
