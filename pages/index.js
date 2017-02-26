@@ -28,7 +28,8 @@ export default class EvaluationForm extends React.Component {
     error: null,
     loading: false,
     settingEvaluator: true,
-    assignments: []
+    todo: [],
+    done: []
   }
 
   componentWillMount () {
@@ -45,27 +46,34 @@ export default class EvaluationForm extends React.Component {
     const params = new URLSearchParams()
     params.append('name', store.get('evaluator').name)
 
-    axios.get(`${coreUrl()}assignments?${params.toString()}`)
-    .then(assignments => assignments.data
-      ? this.setState({loading: false, assignments: assignments.data})
-      : this.setState({loading: false, error: 'Could not load assignments'})
-    )
+    Promise.all([
+      axios.get(`${coreUrl()}assignments/todo?${params.toString()}`),
+      axios.get(`${coreUrl()}assignments/done?${params.toString()}`)
+    ])
+    .then(([todo, done]) => {
+      const update = {loading: false}
+
+      if (done.data)
+        update.done = done.data
+      else
+        update.error = 'Could not load completed assignments'
+
+      if (todo.data)
+        update.todo = todo.data
+      else
+        update.error = 'Could not load assignments that need to be completed'
+
+      this.setState(update)
+    })
     .catch(error => this.setState({error}))
   }
 
   render() {
     const {
-      byName, loading, error, settingEvaluator, assignments
+      byName, loading, error, settingEvaluator, todo, done
     } = this.state
 
-    const undone = []
-    const done = []
-
     const myId = (me => me ? me.id : null)(store.get('evaluator'))
-    assignments.forEach(a => a.evaluators && !a.evaluators.includes(myId)
-      ? undone.push(a)
-      : done.push(a)
-    )
 
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -90,7 +98,7 @@ export default class EvaluationForm extends React.Component {
                 {loading && <CircularProgress />}
                 <Subheader>Evaluations you've been assigned</Subheader>
                 <List>
-                  {undone
+                  {todo
                     .sort((a,b) => new Date(a.dateCreated) - new Date(b.dateCreated))
                     .map(a => (
                       <ListItem
