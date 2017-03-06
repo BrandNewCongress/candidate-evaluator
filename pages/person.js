@@ -184,7 +184,7 @@ export default class EvaluationForm extends React.Component {
                               <span>
                                 {person.name}
                                 <span>{' - '}
-                                  <a href={`https://airtable.com/shrTgt2cTXY8uPBhL/tblZgOfTGnINfZviF/viwq9IIr6qXRADxOE/${
+                                  <a href={`https://airtable.com/tbllX5UDWmdMYziTn/viwlLzeD6vq0JN1HN/${
                                     Array.isArray(person.district) && person.district[0]
                                       ? person.district[0].id
                                       : ''}`
