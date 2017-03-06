@@ -96,9 +96,6 @@ export default class EvaluationForm extends React.Component {
       ).length == 0
     )
 
-    console.log(this.state.person.evaluations)
-    console.log(myId)
-
     if (!this.changed.includes('profile') && firstSubmission)
       return this.setState({noProfileError: true})
 
@@ -197,7 +194,7 @@ export default class EvaluationForm extends React.Component {
                               <span>
                                 {person.name}
                                 <span>{' - '}
-                                  <a href='https://airtable.com/shrTgt2cTXY8uPBhL'>
+                                  <a href='https://airtable.com/shrTgt2cTXY8uPBhL' target='_blank'>
                                     {Array.isArray(person.district) && person.district[0]
                                       ? `${person.district[0].stateAbbreviation[0]} ${person.district[0].congressionalDistrictCode}`
                                       : `Unknown district`
