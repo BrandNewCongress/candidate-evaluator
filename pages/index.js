@@ -58,9 +58,10 @@ export default class EvaluationForm extends React.Component {
       else
         update.error = 'Could not load completed assignments'
 
-      if (todo.data)
+      if (todo.data) {
         update.todo = todo.data
-      else
+        store.set('queue', todo.data)
+      } else
         update.error = 'Could not load assignments that need to be completed'
 
       this.setState(update)
@@ -92,7 +93,8 @@ export default class EvaluationForm extends React.Component {
                 <Subheader>{`Hey ${store.get('evaluator').name}!`}</Subheader>
                 <RaisedButton
                   label={`Not ${store.get('evaluator').name}?`}
-                  style={{width: 200}}
+                  style={{display: 'inline-block'}}
+                  secondary={true}
                   onClick={() => this.setState({settingEvaluator: true})}
                 />
                 {loading && <CircularProgress />}

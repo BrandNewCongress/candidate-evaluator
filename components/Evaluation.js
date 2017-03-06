@@ -100,6 +100,7 @@ export default class Evaluation extends React.Component {
             floatingLabelText='District Score'
             disabled={cannotEdit}
           >
+            <MenuItem value={null} primaryText='' />
             {'1234'.split('').map(opt => (
               <MenuItem value={opt} primaryText={opt} key={opt} />
             ))}

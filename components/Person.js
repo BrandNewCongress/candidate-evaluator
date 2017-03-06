@@ -5,6 +5,7 @@ import Paper from 'material-ui/Paper'
 import SelectField from 'material-ui/SelectField'
 import TextField from 'material-ui/TextField'
 import Toggle from 'material-ui/Toggle'
+import LinkIcon from 'material-ui/svg-icons/content/link'
 
 export default class Person extends React.Component {
   raceOptions = [
@@ -65,6 +66,7 @@ export default class Person extends React.Component {
             value={facebook}
             onChange={this.onChange('facebook')}
           />
+          <Link href={facebook} target='_blank' />
         </div>
 
         <div style={fieldStyle}>
@@ -74,6 +76,7 @@ export default class Person extends React.Component {
             value={linkedIn}
             onChange={this.onChange('linkedIn')}
           />
+          <Link href={linkedIn} target='_blank' />
         </div>
 
         <div style={fieldStyle}>
@@ -82,6 +85,18 @@ export default class Person extends React.Component {
             floatingLabelText='Twitter'
             value={twitter}
             onChange={this.onChange('twitter')}
+          />
+          <Link href={twitter} target='_blank' />
+        </div>
+
+        <div style={{width: '100%', ...fieldStyle}}>
+          <TextField
+            id='otherLinks'
+            floatingLabelText='Other Links'
+            value={otherLinks}
+            style={{width: '100%'}}
+            multiLine={true}
+            onChange={this.onChange('otherLinks')}
           />
         </div>
 
@@ -203,16 +218,26 @@ export default class Person extends React.Component {
           />
         </div>
 
-        <div style={fieldStyle}>
-          <TextField
-            id='otherLinks'
-            floatingLabelText='Other Links'
-            value={otherLinks}
-            onChange={this.onChange('otherLinks')}
-          />
-        </div>
+
 
       </Paper>
     )
+  }
+}
+
+class Link extends React.Component {
+  linkify = href => href.startsWith('https://')
+    ? href
+    : 'https://' + href
+
+
+  render () {
+    return this.props.href
+      ? (
+          <a href={this.linkify(this.props.href)} target='_blank'>
+            <LinkIcon />
+          </a>
+        )
+      : (<div />)
   }
 }

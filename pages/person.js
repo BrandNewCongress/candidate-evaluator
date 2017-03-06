@@ -29,13 +29,20 @@ export default class EvaluationForm extends React.Component {
     loading: true,
     submitting: false,
     settingEvaluator: null,
-    noProfileError: false
+    noProfileError: false,
+    noEvaluationError: false
   }
 
   changed = []
 
   getId = () => {
     return window && window.location.pathname ? window.location.pathname.split('/')[1] : null
+  }
+
+  backHome = () => {
+    const base = window.location.href.split('/')
+    const next = base.slice(0, base.length - 1)
+    window.location.href = next.join('/')
   }
 
   componentWillMount () {
@@ -50,6 +57,7 @@ export default class EvaluationForm extends React.Component {
   })
 
   handlePerson = person => {
+    console.log(person)
     if (person && person.data) {
       this.changed = []
       this.setState({
@@ -82,20 +90,42 @@ export default class EvaluationForm extends React.Component {
   submit = () => {
     const myId = store.get('evaluator').id
 
-    if (
-      !this.changed.includes('profile') &&
-      this.state.person.evaluations
-      .filter(ev =>
+    const firstSubmission = (
+      this.state.person.evaluations.filter(ev =>
         ev.evaluator == myId && ev.id !== undefined
-      )
-      .length == 0
+      ).length == 0
     )
+
+    console.log(this.state.person.evaluations)
+    console.log(myId)
+
+    if (!this.changed.includes('profile') && firstSubmission)
       return this.setState({noProfileError: true})
+
+    if (!this.changed.includes('evaluations') && firstSubmission)
+      return this.setState({noEvaluationError: true})
 
     this.setState({submitting: true})
 
     axios.put(baseUrl() + this.getId(), this.getUpdateObject())
-    .then(this.handlePerson)
+    .then(person => {
+      if (firstSubmission) {
+        let queue = store.get('queue')
+        queue = queue.filter(p => p.id != this.getId())
+        const next = queue[0]
+
+        if (next) {
+          store.set('queue', queue)
+          const split = window.location.href.split('/')
+          const base = split.slice(2, 3)
+          window.location.href = 'https://' + base + '/' + next.id
+        } else {
+          this.backHome()
+        }
+      } else {
+        this.handlePerson(person)
+      }
+    })
     .catch(this.setError)
   }
 
@@ -113,12 +143,19 @@ export default class EvaluationForm extends React.Component {
 
   render() {
     const {
-      person, error, submitting, loading, evaluator, settingEvaluator, noProfileError
+      person, error, submitting, loading, evaluator, settingEvaluator,
+      noProfileError, noEvaluationError
     } = this.state
 
-    const alert = noProfileError && (
+    const alert1 = noProfileError && (
       <Dialog open={true} onRequestClose={() => this.setState({noProfileError: false})}>
         Please edit the nominee's profile with either a summary of their qualifications, or a note about the lack thereof
+      </Dialog>
+    )
+
+    const alert2 = noEvaluationError && (
+      <Dialog open={true} onRequestClose={() => this.setState({noEvaluationError: false})}>
+        Please add an evaluation below
       </Dialog>
     )
 
@@ -136,7 +173,8 @@ export default class EvaluationForm extends React.Component {
             )
           : (
               <div>
-                {alert}
+                {alert1}
+                {alert2}
                 {!settingEvaluator
                   ? (
                       <Paper>
@@ -146,7 +184,7 @@ export default class EvaluationForm extends React.Component {
                               <span>
                                 {person.name}
                                 <span>{' - '}
-                                  <a href={`https://airtable.com/shrTgt2cTXY8uPBhL/tblZgOfTGnINfZviF/${
+                                  <a href={`https://airtable.com/shrTgt2cTXY8uPBhL/tblZgOfTGnINfZviF/viwq9IIr6qXRADxOE/${
                                     Array.isArray(person.district) && person.district[0]
                                       ? person.district[0].id
                                       : ''}`
@@ -163,6 +201,11 @@ export default class EvaluationForm extends React.Component {
                             subtitle={`Status: ${person.nominationStatus}`}
                           />
                           <CardActions>
+                            <RaisedButton style={{width: '140px'}}
+                              onClick={this.backHome}
+                            >
+                              Return to List
+                            </RaisedButton>
                             <RaisedButton style={{width: '140px'}} onClick={this.switchEvaluator}> Switch Evaluator </RaisedButton>
                             <RaisedButton onClick={this.reset} secondary={true} >Reset All</RaisedButton>
                             <RaisedButton onClick={this.submit} primary={true} >Submit</RaisedButton>

@@ -5,6 +5,8 @@ import {Card, CardHeader, CardText} from 'material-ui/Card'
 import Paper from 'material-ui/Paper'
 import Subheader from 'material-ui/Subheader'
 
+const evenIfNull = ['facebook', 'linkedIn', 'twitter', 'otherLinks']
+
 export default class Nomations extends React.Component {
   render () {
     const noms = this.props.nomations || []
@@ -24,7 +26,7 @@ export default class Nomations extends React.Component {
             <CardText expandable={true}>
               {['source', 'profile', 'otherLinks', 'facebook', 'linkedIn', 'twitter',
                 'relationshipToNominator', 'leadership', 'workHistory',
-                'politicalViews', 'publicSpeaking'].map(attr => nom[attr]
+                'politicalViews', 'publicSpeaking'].map(attr => (nom[attr] || evenIfNull.includes(attr))
                   ? (
                       <div>
                         <Subheader key={attr} style={{textTransform: 'capitalize'}}> {toSpaceCase(attr)} </Subheader>
