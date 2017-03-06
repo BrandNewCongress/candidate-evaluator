@@ -111,8 +111,11 @@ export default class EvaluationForm extends React.Component {
     .then(person => {
       if (firstSubmission) {
         let queue = store.get('queue')
-        queue = queue.filter(p => p.id != this.getId())
-        const next = queue[0]
+        let next
+        if (queue) {
+          queue = queue.filter(p => p.id != this.getId())
+          next = queue[0]
+        }
 
         if (next) {
           store.set('queue', queue)
