@@ -217,9 +217,6 @@ export default class Person extends React.Component {
             }}
           />
         </div>
-
-
-
       </Paper>
     )
   }

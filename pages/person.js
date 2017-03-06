@@ -150,14 +150,24 @@ export default class EvaluationForm extends React.Component {
       noProfileError, noEvaluationError
     } = this.state
 
+    const alertButton = (
+      <RaisedButton primary={true} onClick={() => this.setState({noProfileError: false, noEvaluationError: false})}>
+        Ok
+      </RaisedButton>
+    )
+
     const alert1 = noProfileError && (
-      <Dialog open={true} onRequestClose={() => this.setState({noProfileError: false})}>
+      <Dialog open={true} onRequestClose={() => this.setState({noProfileError: false})}
+        actions={[alertButton]}
+      >
         Please edit the nominee's profile with either a summary of their qualifications, or a note about the lack thereof
       </Dialog>
     )
 
     const alert2 = noEvaluationError && (
-      <Dialog open={true} onRequestClose={() => this.setState({noEvaluationError: false})}>
+      <Dialog open={true} onRequestClose={() => this.setState({noEvaluationError: false})}
+        actions={[alertButton]}
+      >
         Please add an evaluation below
       </Dialog>
     )
@@ -187,12 +197,7 @@ export default class EvaluationForm extends React.Component {
                               <span>
                                 {person.name}
                                 <span>{' - '}
-                                  <a href={`https://airtable.com/tbllX5UDWmdMYziTn/viwlLzeD6vq0JN1HN/${
-                                    Array.isArray(person.district) && person.district[0]
-                                      ? person.district[0].id
-                                      : ''}`
-                                    }
-                                  >
+                                  <a href='https://airtable.com/shrTgt2cTXY8uPBhL'>
                                     {Array.isArray(person.district) && person.district[0]
                                       ? `${person.district[0].stateAbbreviation[0]} ${person.district[0].congressionalDistrictCode}`
                                       : `Unknown district`
