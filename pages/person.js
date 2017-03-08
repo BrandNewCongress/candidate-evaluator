@@ -29,8 +29,7 @@ export default class EvaluationForm extends React.Component {
     loading: true,
     submitting: false,
     settingEvaluator: null,
-    noProfileError: false,
-    noEvaluationError: false
+    noProfileError: false
   }
 
   changed = []
@@ -99,9 +98,6 @@ export default class EvaluationForm extends React.Component {
     if (!this.changed.includes('profile') && firstSubmission)
       return this.setState({noProfileError: true})
 
-    if (!this.changed.includes('evaluations') && firstSubmission)
-      return this.setState({noEvaluationError: true})
-
     this.setState({submitting: true})
 
     axios.put(baseUrl() + this.getId(), this.getUpdateObject())
@@ -144,11 +140,11 @@ export default class EvaluationForm extends React.Component {
   render() {
     const {
       person, error, submitting, loading, evaluator, settingEvaluator,
-      noProfileError, noEvaluationError
+      noProfileError
     } = this.state
 
     const alertButton = (
-      <RaisedButton primary={true} onClick={() => this.setState({noProfileError: false, noEvaluationError: false})}>
+      <RaisedButton primary={true} onClick={() => this.setState({noProfileError: false})}>
         Ok
       </RaisedButton>
     )
@@ -161,13 +157,6 @@ export default class EvaluationForm extends React.Component {
       </Dialog>
     )
 
-    const alert2 = noEvaluationError && (
-      <Dialog open={true} onRequestClose={() => this.setState({noEvaluationError: false})}
-        actions={[alertButton]}
-      >
-        Please add an evaluation below
-      </Dialog>
-    )
 
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -184,7 +173,6 @@ export default class EvaluationForm extends React.Component {
           : (
               <div>
                 {alert1}
-                {alert2}
                 {!settingEvaluator
                   ? (
                       <Paper>
