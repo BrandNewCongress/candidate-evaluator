@@ -106,6 +106,7 @@ export default class Person extends React.Component {
             onChange={this.onChange('gender')}
             floatingLabelText='Gender'
           >
+            <MenuItem value={null} primaryText='' />
             {['Male', 'Female', 'Other'].map(v => (
               <MenuItem value={v} primaryText={v} key={v} />
             ))}
@@ -118,6 +119,7 @@ export default class Person extends React.Component {
             onChange={this.onChange('politicalParty')}
             floatingLabelText='Political Party'
           >
+            <MenuItem value={null} primaryText='' />
             {['Democrat', 'Republican', 'Green', 'Independent', 'Unknown'].map(v => (
               <MenuItem value={v} primaryText={v} key={v} />
             ))}
@@ -130,6 +132,7 @@ export default class Person extends React.Component {
             onChange={this.onChange('religion')}
             floatingLabelText='Religion'
           >
+            <MenuItem value={null} primaryText='' />
             {[ "Evangelical", "Hindu", "Muslim", "Buddhist", "Jewish", "Other",
               "Mormon", "Baptist", "Christian - Other", "Catholic",
               "Christian - AME"].map(v => (
