@@ -191,7 +191,7 @@ export default class EvaluationForm extends React.Component {
                                 </span>
                               </span>
                             }
-                            subtitle={`Status: ${person.nominationStatus}`}
+                            subtitle={(<span>Status: {person.nominationStatus}<br/>Source:{person.source}</span>)}
                           />
                           <CardActions>
                             <RaisedButton style={{width: '140px'}}
