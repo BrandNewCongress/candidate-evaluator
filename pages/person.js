@@ -89,20 +89,20 @@ export default class EvaluationForm extends React.Component {
   submit = () => {
     const myId = store.get('evaluator').id
 
-    const firstSubmission = (
+    const profileRequired = (
       this.state.person.evaluations.filter(ev =>
-        ev.evaluator == myId && ev.id !== undefined
-      ).length == 0
+        ev.id == undefined
+      ).length > 0
     )
 
-    if (!this.changed.includes('profile') && firstSubmission)
+    if (profileRequired && !this.changed.includes('profile'))
       return this.setState({noProfileError: true})
 
     this.setState({submitting: true})
 
     axios.put(baseUrl() + this.getId(), this.getUpdateObject())
     .then(person => {
-      if (firstSubmission) {
+      if (profileRequired) {
         let queue = store.get('queue')
         let next
         if (queue) {
