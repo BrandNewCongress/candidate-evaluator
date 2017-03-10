@@ -133,9 +133,9 @@ export default class Person extends React.Component {
             floatingLabelText='Religion'
           >
             <MenuItem value='' primaryText='' />
-            {[ "Evangelical", "Hindu", "Muslim", "Buddhist", "Jewish", "Other",
-              "Mormon", "Baptist", "Christian - Other", "Catholic",
-              "Christian - AME"].map(v => (
+            {[ 'Evangelical', 'Hindu', 'Muslim', 'Buddhist', 'Jewish', 'Other',
+              'Mormon', 'Baptist', 'Christian - Other', 'Catholic',
+              'Christian - AME', 'Atheist', 'Agnostic'].sort().map(v => (
                 <MenuItem value={v} primaryText={v} key={v} />
             ))}
           </SelectField>
