@@ -45,7 +45,7 @@ export default class Evaluation extends React.Component {
 
     return (
       <Dialog title='Add Evaluation' open={true} modal={true}
-        actions={actions}
+        actions={actions} autoScrollBodyContent={true}
       >
         {this.state.error &&
           <span style={{color: 'red'}}>{this.state.error}</span>
