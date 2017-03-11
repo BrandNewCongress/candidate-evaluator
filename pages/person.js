@@ -157,7 +157,6 @@ export default class EvaluationForm extends React.Component {
       </Dialog>
     )
 
-
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         {loading
@@ -180,14 +179,14 @@ export default class EvaluationForm extends React.Component {
                           <CardHeader
                             title={
                               <span>
-                                {person.name}
-                                <span>{' - '}
+                                {person.name}  – {person.addressesPlainText.replace(/"/g, '')}
+                                <span>(
                                   <a href='https://airtable.com/shrTgt2cTXY8uPBhL' target='_blank'>
                                     {Array.isArray(person.district) && person.district[0]
                                       ? `${person.district[0].stateAbbreviation[0]} ${person.district[0].congressionalDistrictCode}`
                                       : `Unknown district`
                                     }
-                                  </a>
+                                  </a>)
                                 </span>
                               </span>
                             }
