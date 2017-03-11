@@ -12,7 +12,7 @@ export default class Person extends React.Component {
     'Black', 'East Asian', 'South Asian', 'White - Caucasian',
     'White - Jewish', 'Latino', 'American Indian/ Native American',
     'Asian Pacific Islander', 'Hispanic'
-  ]
+  ].sort()
 
   occupationOptions = [
     'Military', 'Education', 'Healthcare', 'Finance', 'Media/ Communications',
@@ -22,13 +22,13 @@ export default class Person extends React.Component {
     'Nonprofit Organizationa Management', 'Banking', 'Human Resources',
     'Environmental', 'Sports', 'Tourism', 'Sociology', 'Missionary',
     'Social service / Law enforcement (police, firefighter, etc.)',
-    'Stay at Home Parent', 'Musician', 'Artist', 'Other', 'Student'
-  ]
+    'Stay at Home Parent', 'Musician', 'Artist', 'Other', 'Student', 'Government'
+  ].sort()
 
   potentialVolunteerOptions = [
     'Connector', 'Candidate Research', 'District Specialist', 'Candidate Caller',
     'Outreach', 'Tech'
-  ]
+  ].sort()
 
   onChange = name => (ev, idx, value) =>
     this.props.mutate({[name]: value !== undefined ? value : ev.target.value})
