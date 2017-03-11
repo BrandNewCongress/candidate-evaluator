@@ -3,6 +3,7 @@ import '../lib/tap-event'
 import Router from 'next/router'
 import axios from 'axios'
 import store from 'store'
+import URLSearchParams from 'url-search-params'
 import Person from '../components/Person'
 import Nominations from '../components/Nominations'
 import Evaluations from '../components/Evaluations'
@@ -15,6 +16,8 @@ import RaisedButton from 'material-ui/RaisedButton'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Paper from 'material-ui/Paper'
 import TextField from 'material-ui/TextField'
+
+if (typeof window !== 'undefined') window.URLSearchParams = URLSearchParams
 
 const baseUrl = () => window.location.href.includes('localhost')
   ? 'http://localhost:8080/person/'
@@ -50,7 +53,9 @@ export default class EvaluationForm extends React.Component {
   }
 
   setError = error => this.setState({
-    error: error.response.data.message,
+    error: error.response
+      ? error.response.data.message
+      : JSON.stringify(error),
     submitting: false,
     loading: false
   })

@@ -5,7 +5,7 @@ import Router from 'next/router'
 import axios from 'axios'
 import muiTheme from '../bnc-theme'
 import store from 'store'
-
+import URLSearchParams from 'url-search-params'
 import CircularProgress from 'material-ui/CircularProgress'
 import Create from 'material-ui/svg-icons/content/create'
 import IconButton from 'material-ui/IconButton'
@@ -15,6 +15,8 @@ import Paper from 'material-ui/Paper'
 // import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton'
 import RaisedButton from 'material-ui/RaisedButton'
 import Subheader from 'material-ui/Subheader'
+
+if (typeof window !== 'undefined') window.URLSearchParams = URLSearchParams
 
 const coreUrl = () => window.location.href.includes('localhost')
   ? 'http://localhost:8080/'
