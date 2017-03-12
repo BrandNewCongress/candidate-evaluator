@@ -184,7 +184,7 @@ export default class EvaluationForm extends React.Component {
                           <CardHeader
                             title={
                               <span>
-                                {person.name}  – {person.addressesPlainText ? person.addressesPlainText.replace(/"/g, '') : ''}
+                                {person.name}  – {person.addressPlainText ? person.addressPlainText.replace(/"/g, '') : ''}
                                 <span>(
                                   <a href='https://airtable.com/shrTgt2cTXY8uPBhL' target='_blank'>
                                     {Array.isArray(person.district) && person.district[0]
