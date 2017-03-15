@@ -9,11 +9,10 @@ import LinkIcon from 'material-ui/svg-icons/content/link'
 
 export default class Person extends React.Component {
   raceOptions = [
-    'Black', 'East Asian', 'South Asian', 'White - Caucasian',
-    'White - Jewish', 'Latino', 'American Indian/ Native American',
-    'Asian Pacific Islander', 'Hispanic'
+    'Black', 'White - Caucasian', 'Latino', 'East Asian', 'South Asian',
+    'Other', 'White - Jewish', 'American Indian/ Native American',
+    'Asian Pacific Islander', 'Hispanic', 'Eastern European', 'Middle Eastern'
   ].sort()
-
 
   occupationOptions = [
     'Military', 'Education', 'Healthcare', 'Finance', 'Media/ Communications',
