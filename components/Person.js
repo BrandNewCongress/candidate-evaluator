@@ -14,7 +14,20 @@ export default class Person extends React.Component {
     'Asian Pacific Islander', 'Hispanic'
   ].sort()
 
+
   occupationOptions = [
+    'Military', 'Education', 'Healthcare', 'Finance', 'Media/ Communications',
+    'Energy', 'Engineer', 'Agriculture', 'Business Owner', 'Manufacturing',
+    'Law', 'Politics', 'Social Work', 'Technology', 'Pastor', 'Architecture',
+    'Food Services', 'Academia/ Research', 'Systematics',
+    'Marketing and Advertising', 'Nonprofit Management', 'Banking',
+    'Human Resources', 'Environmental', 'Sports', 'Tourism',
+    'Sociology', 'Social service / Law enforcement (police, firefighter, etc.)',
+    'Stay at Home Parent', 'Musician', 'Artist', 'Other', 'Student',
+    'Missionary', 'Sales', 'Government'
+  ].sort()
+
+   [
     'Military', 'Education', 'Healthcare', 'Finance', 'Media/ Communications',
     'Energy', 'Engineer', 'Agriculture', 'Business Owner', 'Manufacturing',
     'Law', 'Politics', 'Social Work', 'Technology', 'Pastor', 'Architecture',
