@@ -26,17 +26,6 @@ export default class Person extends React.Component {
     'Missionary', 'Sales', 'Government'
   ].sort()
 
-   [
-    'Military', 'Education', 'Healthcare', 'Finance', 'Media/ Communications',
-    'Energy', 'Engineer', 'Agriculture', 'Business Owner', 'Manufacturing',
-    'Law', 'Politics', 'Social Work', 'Technology', 'Pastor', 'Architecture',
-    'Food Services', 'Academia/ Research', 'Systematics', 'Marketing and Advertising',
-    'Nonprofit Organizationa Management', 'Banking', 'Human Resources',
-    'Environmental', 'Sports', 'Tourism', 'Sociology', 'Missionary',
-    'Social service / Law enforcement (police, firefighter, etc.)',
-    'Stay at Home Parent', 'Musician', 'Artist', 'Other', 'Student', 'Government'
-  ].sort()
-
   potentialVolunteerOptions = [
     'Connector', 'Candidate Research', 'District Specialist', 'Candidate Caller',
     'Outreach', 'Tech'
