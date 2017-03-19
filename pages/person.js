@@ -107,6 +107,16 @@ export default class EvaluationForm extends React.Component {
 
     axios.put(baseUrl() + this.getId(), this.getUpdateObject())
     .then(person => {
+      let history = store.get('history') || []
+
+      history.unshift({
+        id: this.getId(),
+        name: this.state.person.name,
+        dateCreated: Date.now()
+      })
+
+      store.set('history', history)
+
       if (profileRequired) {
         let queue = store.get('queue')
         let next

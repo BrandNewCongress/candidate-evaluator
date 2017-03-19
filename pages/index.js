@@ -55,9 +55,11 @@ export default class EvaluationForm extends React.Component {
     .then(([todo, done]) => {
       const update = {loading: false}
 
-      if (done.data)
-        update.done = done.data
-      else
+      if (done.data) {
+        const history = store.get('history') || []
+        const notInHistory = done.data.filter(d => history.filter(h => h.id == d.id).length == 0)
+        update.done = history.concat(notInHistory)
+      } else
         update.error = 'Could not load completed assignments'
 
       if (todo.data) {
@@ -66,9 +68,13 @@ export default class EvaluationForm extends React.Component {
       } else
         update.error = 'Could not load assignments that need to be completed'
 
+
       this.setState(update)
     })
-    .catch(error => this.setState({error}))
+    .catch(error => {
+      console.log(error)
+      this.setState({error})
+    })
   }
 
   render() {
