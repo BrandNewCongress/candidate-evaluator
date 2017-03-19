@@ -227,7 +227,7 @@ export default class Person extends React.Component {
 }
 
 class Link extends React.Component {
-  linkify = href => href.startsWith('https://')
+  linkify = href => href.startsWith('https://') || href.startsWith('http://')
     ? href
     : 'https://' + href
 
