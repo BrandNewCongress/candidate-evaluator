@@ -148,6 +148,8 @@ export default class Person extends React.Component {
             value={race || []}
             dataSource={this.raceOptions}
             floatingLabelText='Race'
+            openOnFocus={true}
+            menuProps={{maxHeight: 300}}
             onRequestAdd={val =>
               this.onChange('race')(undefined, undefined,
                 (race || []).concat(
@@ -174,6 +176,8 @@ export default class Person extends React.Component {
             value={occupations || []}
             dataSource={this.occupationOptions}
             floatingLabelText='Occupation'
+            openOnFocus={true}
+            menuProps={{maxHeight: 300}}
             onRequestAdd={val =>
               this.onChange('occupations')(undefined, undefined,
                 (occupations || []).concat(
@@ -203,6 +207,7 @@ export default class Person extends React.Component {
             floatingLabelText='Potential Volunteer'
             value={potentialVolunteer || []}
             dataSource={this.potentialVolunteerOptions}
+            menuProps={{maxHeight: 300}}
             onRequestAdd={val =>
               this.onChange('potentialVolunteer')(undefined, undefined,
                 (potentialVolunteer || []).concat(
