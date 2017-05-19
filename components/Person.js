@@ -23,7 +23,7 @@ export default class Person extends React.Component {
     'Human Resources', 'Environmental', 'Sports', 'Tourism',
     'Sociology', 'Social service / Law enforcement (police, firefighter, etc.)',
     'Stay at Home Parent', 'Musician', 'Artist', 'Other', 'Student',
-    'Missionary', 'Sales', 'Government'
+    'Missionary', 'Sales', 'Government', 'Accountant'
   ].sort()
 
   potentialVolunteerOptions = [
